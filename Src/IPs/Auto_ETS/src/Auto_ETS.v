@@ -147,7 +147,7 @@ module Auto_ETS#(
 	(* MARK_DEBUG="true" *)reg data_r;
 	(* MARK_DEBUG="true" *)reg data_sync;
 	always @(posedge shifting_clk) begin
-		data_r <= CMP_DATA ;//&& data_sync;
+		data_r <= test_trigger ;//&& data_sync;
 	end
 
 	reg [255:0] random;
@@ -208,9 +208,9 @@ module Auto_ETS#(
 	(* MARK_DEBUG="true" *)reg rising_detector;
 	(* MARK_DEBUG="true" *)reg sync_tri;
 	always @(posedge S_AXI_DATA_aclk) begin
-		rising_detector <= tri_data;
+		rising_detector <= test_trigger;
 	end
-	(* MARK_DEBUG="true" *)wire rise_occ = (~rising_detector) && tri_data;
+	(* MARK_DEBUG="true" *)wire rise_occ = (~rising_detector) && test_trigger;
 	(* MARK_DEBUG="true" *)reg rise_occ_r,rise_occ_r_i;
 	always @(negedge shifting_clk) begin
 		rise_occ_r_i <= rise_occ;
