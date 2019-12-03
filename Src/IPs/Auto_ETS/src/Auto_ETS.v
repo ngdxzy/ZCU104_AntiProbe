@@ -156,8 +156,8 @@ module Auto_ETS#(
 	always @ (posedge S_AXI_DATA_aclk or negedge S_AXI_DATA_aresetn) begin
 		if(~S_AXI_DATA_aresetn) begin
 			tri_data <= 0;
-			//random <= 256'h15195_81609_ace84_b8653_54025_29395_67761_7782d_74239_84161_e5a5c_81ae2_2513;
-			random <= 256'haaaaa_aaaaa_aaaaa_aaaaa_aaaaa_aaaaa_aaaaa_aaaaa_aaaaa_aaaaa_aaaaa_aaaaa_aaaa;
+			random <= 256'h15195_81609_ace84_b8653_54025_29395_67761_7782d_74239_84161_e5a5c_81ae2_2513;
+			//random <= 256'haaaaa_aaaaa_aaaaa_aaaaa_aaaaa_aaaaa_aaaaa_aaaaa_aaaaa_aaaaa_aaaaa_aaaaa_aaaa;
 		end
 		else begin
 			tri_data <= random[0];
