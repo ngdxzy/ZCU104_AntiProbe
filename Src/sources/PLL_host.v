@@ -51,7 +51,7 @@ module PLL_host#(
 	wire CLKOUT1;
 	wire clock_fb;
 	PLLE3_ADV #(
-		.CLKFBOUT_MULT(VCO_MUL),          // Multiply value for all CLKOUT, (1-19)
+		.CLKFBOUT_MULT(VCO_MUL),          // Multiply value for all CLKOUT, (1-19)x
 		.CLKFBOUT_PHASE(0.0),       // Phase offset in degrees of CLKFB, (-360.000-360.000)
 		.CLKIN_PERIOD(CLK_IN_PEO),         // Input clock period in ns to ps resolution (i.e. 33.333 is 30 MHz).
 		// CLKOUT0 Attributes: Divide, Phase and Duty Cycle for the CLKOUT0 output
