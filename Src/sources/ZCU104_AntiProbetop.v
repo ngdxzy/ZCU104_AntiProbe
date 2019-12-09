@@ -26,10 +26,10 @@ module ZCU104_AntiProbetop(
 	input reset,
 	input cmp_in_p,
 	input cmp_in_n,
-	// input gthrxn_in,
-	// input gthrxp_in,
-	// output gthtxn_out,
-	// output gthtxp_out,
+	input gthrxn_in,
+	input gthrxp_in,
+	output gthtxn_out,
+	output gthtxp_out,
 	input clk_in_p,
 	input clk_in_n,
 	output sma_swing,
@@ -86,6 +86,7 @@ module ZCU104_AntiProbetop(
 	end
 
 	ZCU104_MCU ZCU104_MCU_i(
+		.gth_rx_clk (rx_clk),
 		.tri_data (tri_data),
 		.GTH_DATA (GTH_DATA),
 		.CMP_DATA_0(CMP_DATA_0),
@@ -113,7 +114,7 @@ module ZCU104_AntiProbetop(
 	ETS_Serve_top inst_ETS_Serve_top(
 		.free_run_rst (~free_run_rst_n),
 		.free_run_clk (free_run_clk),	
-		.op_clk		  (ref_clk_fb),
+		.op_clk		  (rx_clk),
 		.clk_in_p     (clk_in_p),
 		.clk_in_n     (clk_in_n),
 		.hp_rx_p      (),
@@ -157,7 +158,40 @@ module ZCU104_AntiProbetop(
 			gth_inv_data <= gth_inv_data * 123 + 59;
 		end
 	end
-
+	wire rx_clk;
+gtwizard_ultrascale_0 your_instance_name (
+  .gtwiz_userclk_tx_reset_in(~free_run_rst_n),                    // input wire [0 : 0] gtwiz_userclk_tx_reset_in
+  .gtwiz_userclk_tx_srcclk_out(),                // output wire [0 : 0] gtwiz_userclk_tx_srcclk_out
+  .gtwiz_userclk_tx_usrclk_out(),                // output wire [0 : 0] gtwiz_userclk_tx_usrclk_out
+  .gtwiz_userclk_tx_usrclk2_out(),              // output wire [0 : 0] gtwiz_userclk_tx_usrclk2_out
+  .gtwiz_userclk_tx_active_out(),                // output wire [0 : 0] gtwiz_userclk_tx_active_out
+  .gtwiz_userclk_rx_reset_in(~free_run_rst_n),                    // input wire [0 : 0] gtwiz_userclk_rx_reset_in
+  .gtwiz_userclk_rx_srcclk_out(),                // output wire [0 : 0] gtwiz_userclk_rx_srcclk_out
+  .gtwiz_userclk_rx_usrclk_out(rx_clk),                // output wire [0 : 0] gtwiz_userclk_rx_usrclk_out
+  .gtwiz_userclk_rx_usrclk2_out(),              // output wire [0 : 0] gtwiz_userclk_rx_usrclk2_out
+  .gtwiz_userclk_rx_active_out(),                // output wire [0 : 0] gtwiz_userclk_rx_active_out
+  .gtwiz_reset_clk_freerun_in(free_run_clk),                  // input wire [0 : 0] gtwiz_reset_clk_freerun_in
+  .gtwiz_reset_all_in(~free_run_rst_n),                                  // input wire [0 : 0] gtwiz_reset_all_in
+  .gtwiz_reset_tx_pll_and_datapath_in(~free_run_rst_n),  // input wire [0 : 0] gtwiz_reset_tx_pll_and_datapath_in
+  .gtwiz_reset_tx_datapath_in(~free_run_rst_n),                  // input wire [0 : 0] gtwiz_reset_tx_datapath_in
+  .gtwiz_reset_rx_pll_and_datapath_in(~free_run_rst_n),  // input wire [0 : 0] gtwiz_reset_rx_pll_and_datapath_in
+  .gtwiz_reset_rx_datapath_in(~free_run_rst_n),                  // input wire [0 : 0] gtwiz_reset_rx_datapath_in
+  .gtwiz_reset_rx_cdr_stable_out(),            // output wire [0 : 0] gtwiz_reset_rx_cdr_stable_out
+  .gtwiz_reset_tx_done_out(),                        // output wire [0 : 0] gtwiz_reset_tx_done_out
+  .gtwiz_reset_rx_done_out(),                        // output wire [0 : 0] gtwiz_reset_rx_done_out
+  .gtwiz_userdata_tx_in(GTH_DATA),                              // input wire [31 : 0] gtwiz_userdata_tx_in
+  .gtwiz_userdata_rx_out(),                            // output wire [31 : 0] gtwiz_userdata_rx_out
+  .gtrefclk00_in(gtrefclk00_in),                                            // input wire [0 : 0] gtrefclk00_in
+  .qpll0outclk_out(),                                        // output wire [0 : 0] qpll0outclk_out
+  .qpll0outrefclk_out(),                                  // output wire [0 : 0] qpll0outrefclk_out
+  .gthrxn_in(gthrxn_in),                                                    // input wire [0 : 0] gthrxn_in
+  .gthrxp_in(gthrxp_in),                                                    // input wire [0 : 0] gthrxp_in
+  .gthtxn_out(gthtxn_out),                                                  // output wire [0 : 0] gthtxn_out
+  .gthtxp_out(gthtxp_out),                                                  // output wire [0 : 0] gthtxp_out
+  .gtpowergood_out(),                                        // output wire [0 : 0] gtpowergood_out
+  .rxpmaresetdone_out(),                                  // output wire [0 : 0] rxpmaresetdone_out
+  .txpmaresetdone_out()                                  // output wire [0 : 0] txpmaresetdone_out
+);
 	IBUFDS_GTE4 #(
 		.REFCLK_EN_TX_PATH(1'b0),   // Refer to Transceiver User Guide
 		.REFCLK_HROW_CK_SEL(2'b00), // Refer to Transceiver User Guide
