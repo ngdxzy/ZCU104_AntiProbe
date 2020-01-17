@@ -32,7 +32,6 @@ module ZCU104_AntiProbetop(
 	output gthtxp_out,
 	input clk_in_p,
 	input clk_in_n,
-	output sma_swing,
 	output ref_clk_fb_good,
 	output system_clk_good,
 	output LE_p,
@@ -53,14 +52,6 @@ module ZCU104_AntiProbetop(
 	wire s11_rx;
 	wire s21_rx;
 	wire [31:0] GTH_DATA;
-	OBUF #(
-	.DRIVE(12),   // Specify the output drive strength
-	.IOSTANDARD("DEFAULT"), // Specify the output I/O standard
-	.SLEW("FAST") // Specify the output slew rate
-	) OBUF_inst_sma (
-	.O(sma_swing),     // Buffer output (connect directly to top-level port)
-	.I(swing_out)      // Buffer input
-	);
 
 	OBUFDS #(
 		.IOSTANDARD("DEFAULT"), // Specify the output I/O standard

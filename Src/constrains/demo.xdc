@@ -24,20 +24,21 @@ set_property DQS_BIAS TRUE [get_ports cmp_in_p]
 set_property DQS_BIAS TRUE [get_ports cmp_in_n]
 
 
-set_property PACKAGE_PIN B10 [get_ports LE_p]
+set_property PACKAGE_PIN F8 [get_ports LE_p]
 set_property IOSTANDARD LVDS [get_ports LE_p]
 
-set_property PACKAGE_PIN D12 [get_ports cmp_in_p]
+set_property PACKAGE_PIN M13 [get_ports cmp_in_p]
 
 connect_debug_port dbg_hub/clk [get_nets REF_CLK_IN]
 
-set_property PACKAGE_PIN D16 [get_ports tri_data]
+set_property PACKAGE_PIN H16 [get_ports tri_data]
 set_property IOSTANDARD LVCMOS18 [get_ports tri_data]
 set_property SLEW FAST [get_ports tri_data]
 
 
 
 set_property OFFCHIP_TERM NONE [get_ports sma_swing]
+
 create_debug_core u_ila_0 ila
 set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
 set_property ALL_PROBE_SAME_MU_CNT 1 [get_debug_cores u_ila_0]
@@ -48,7 +49,7 @@ set_property C_INPUT_PIPE_STAGES 0 [get_debug_cores u_ila_0]
 set_property C_TRIGIN_EN false [get_debug_cores u_ila_0]
 set_property C_TRIGOUT_EN false [get_debug_cores u_ila_0]
 set_property port_width 1 [get_debug_ports u_ila_0/clk]
-connect_debug_port u_ila_0/clk [get_nets [list inst_ETS_Serve_top/inst_MMCM_host/shifting_clk]]
+connect_debug_port u_ila_0/clk [get_nets [list shifting_clk]]
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe0]
 set_property port_width 1 [get_debug_ports u_ila_0/probe0]
 connect_debug_port u_ila_0/probe0 [get_nets [list ZCU104_MCU_i/Auto_ETS_0/inst/data_r]]
