@@ -36,7 +36,7 @@ module ZCU104_AntiProbetop(
 	output system_clk_good,
 	output LE_p,
 	output LE_n,
-	output tri_data
+	output wire tri_data
     );
 	wire gthrefclk00_in;
 	wire gtrefclk00_to_pl;
@@ -59,7 +59,7 @@ module ZCU104_AntiProbetop(
 	) OBUFDS_inst (
 		.O(LE_p),     // Diff_p output (connect directly to top-level port)
 		.OB(LE_n),   // Diff_n output (connect directly to top-level port)
-		.I(~shifting_clk)      // Buffer input
+		.I(shifting_clk)      // Buffer input
 	);
 	wire [7:0] CMP_DATA_0;
 	// ila_0 your_instance_name (
@@ -78,7 +78,7 @@ module ZCU104_AntiProbetop(
 
 	ZCU104_MCU ZCU104_MCU_i(
 		.gth_rx_clk (rx_clk),
-		.tri_data (tri_data),
+		.tri_data (),
 		.GTH_DATA (GTH_DATA),
 		.CMP_DATA_0(CMP_DATA_0),
 		.CMP_DATA_1(cmp_data_r),
@@ -137,7 +137,7 @@ module ZCU104_AntiProbetop(
 		.shifting_clk (shifting_clk),
 		.swing_out    (swing_out),
 		.fixed_clk    (fixed_clk),
-		.imp_clk      (imp_clk_s)
+		.imp_clk      (tri_data)
 	);
 	reg [31:0] gth_inv_data;
 	reg invert;

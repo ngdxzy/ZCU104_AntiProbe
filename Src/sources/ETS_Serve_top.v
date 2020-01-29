@@ -104,7 +104,7 @@ module ETS_Serve_top(
 		.FIXED_DIV(8),
 		.IMPULSE_DIV(8),
 		.PHY_DIV(8),
-		.SWING_DIV(80.125)
+		.SWING_DIV(8)
 	) inst_MMCM_host (
 		.free_run_clk (free_run_clk),
 		.clk_in       (clk_in),
