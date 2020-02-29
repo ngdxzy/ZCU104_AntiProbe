@@ -66,6 +66,8 @@ module MMCM_host#(
 	wire CLKOUT2;
 	wire CLKOUT3;
 	wire CLKOUT4;
+	wire CLKOUT5;
+	wire imp1,imp2;
 	MMCME3_ADV #(
 		.BANDWIDTH("OPTIMIZED"),        // Jitter programming (HIGH, LOW, OPTIMIZED)
 		.CLKFBOUT_MULT_F(VCO_MUL),          // Multiply value for all CLKOUT (2.000-64.000)
@@ -88,7 +90,7 @@ module MMCM_host#(
 		.CLKOUT2_PHASE(0.0),
 		.CLKOUT3_PHASE(0.0),
 		.CLKOUT4_PHASE(0.0),
-		.CLKOUT5_PHASE(0.0),
+		.CLKOUT5_PHASE(11.25),
 		.CLKOUT6_PHASE(0.0),
 		// CLKOUT1_DIVIDE - CLKOUT6_DIVIDE: Divide amount for CLKOUT (1-128)
 		.CLKOUT1_DIVIDE(SHIFTING_DIV),
@@ -96,8 +98,8 @@ module MMCM_host#(
 		.CLKOUT3_DIVIDE(PHY_DIV),
 		.CLKOUT4_CASCADE("FALSE"),
 		.CLKOUT4_DIVIDE(FIXED_DIV),
-		.CLKOUT5_DIVIDE(10),
-		.CLKOUT6_DIVIDE(10),
+		.CLKOUT5_DIVIDE(IMPULSE_DIV),
+		.CLKOUT6_DIVIDE(IMPULSE_DIV),
 		.COMPENSATION("AUTO"),          // AUTO, BUF_IN, EXTERNAL, INTERNAL, ZHOLD
 		.DIVCLK_DIVIDE(VCO_DIV),              // Master division value (1-106)
 		// Programmable Inversion Attributes: Specifies built-in programmable inversion on specific pins
@@ -138,7 +140,7 @@ module MMCM_host#(
 		.CLKOUT3(CLKOUT3),           // 1-bit output: CLKOUT3
 		.CLKOUT3B(),         // 1-bit output: Inverted CLKOUT3
 		.CLKOUT4(CLKOUT4),           // 1-bit output: CLKOUT4
-		.CLKOUT5(),           // 1-bit output: CLKOUT5
+		.CLKOUT5(CLKOUT5),           // 1-bit output: CLKOUT5
 		.CLKOUT6(),           // 1-bit output: CLKOUT6
 		// Feedback outputs: Clock feedback ports
 		.CLKFBIN(CLKFB_IN),            // 1-bit input: Feedback clock
@@ -177,6 +179,10 @@ module MMCM_host#(
 		.O(fixed_clk), // 1-bit output: Clock output
 		.I(CLKOUT4)  // 1-bit input: Clock input
 	);
+	BUFG BUFG_CLKOUT5 (
+		.O(imp2), // 1-bit output: Clock output
+		.I(CLKOUT5)  // 1-bit input: Clock input
+	);
 
 	BUFG BUFG_CLKOUT1 (
 		.O(shifting_clk), // 1-bit output: Clock output
@@ -184,7 +190,7 @@ module MMCM_host#(
 	);
 
 	BUFG BUFG_CLKOUT2 (
-		.O(imp_clk), // 1-bit output: Clock output
+		.O(imp1), // 1-bit output: Clock output
 		.I(CLKOUT2)  // 1-bit input: Clock input
 	);
 
@@ -197,4 +203,5 @@ module MMCM_host#(
 		.O(CLKFB_IN), // 1-bit output: Clock output
 		.I(CLKFB_OUT)  // 1-bit input: Clock input
 	);
+	assign imp_clk = imp1 & (~imp2);
 endmodule

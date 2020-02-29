@@ -235,7 +235,7 @@ module Auto_ETS#(
 		.reset        (~S_AXI_DATA_aresetn),
 		.CMP_DATA     (data_r),
 		.ps_en        (ps_en),
-		.trigger      (data_sync),
+		.trigger      (1'b1),
 		.ps_incdec    (ps_incdec),
 		.ps_clk       (ps_clk),
 		.ps_done      (ps_done),

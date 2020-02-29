@@ -53,6 +53,14 @@ module ZCU104_AntiProbetop(
 	wire s11_rx;
 	wire s21_rx;
 	wire [31:0] GTH_DATA;
+
+	wire [6:0] mmcm_drp_daddr;
+	wire [15:0] mmcm_drp_do;
+	wire [15:0] mmcm_drp_di;
+	wire mmcm_drp_den;
+	wire mmcm_drp_dwe;
+	wire mmcm_drp_drdy;
+
 	OBUF #(
 	.DRIVE(12),   // Specify the output drive strength
 	.IOSTANDARD("DEFAULT"), // Specify the output I/O standard
@@ -86,7 +94,7 @@ module ZCU104_AntiProbetop(
 	end
 
 	ZCU104_MCU ZCU104_MCU_i(
-		.tri_data (tri_data),
+		.tri_data (),
 		.GTH_DATA (GTH_DATA),
 		.CMP_DATA_0(CMP_DATA_0),
 		.CMP_DATA_1(cmp_data_r),
@@ -145,7 +153,7 @@ module ZCU104_AntiProbetop(
 		.shifting_clk (shifting_clk),
 		.swing_out    (swing_out),
 		.fixed_clk    (fixed_clk),
-		.imp_clk      (imp_clk_s)
+		.imp_clk      (tri_data)
 	);
 	reg [31:0] gth_inv_data;
 	reg invert;
