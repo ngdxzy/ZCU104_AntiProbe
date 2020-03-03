@@ -24,147 +24,151 @@ module ZCU104_AntiProbetop(
 	input ref_clk_in_p,
 	input ref_clk_in_n,
 	input reset,
-	input cmp_in_p,
-	input cmp_in_n,
-	// input gthrxn_in,
-	// input gthrxp_in,
-	// output gthtxn_out,
-	// output gthtxp_out,
-	input clk_in_p,
-	input clk_in_n,
-	output sma_swing,
+
+	input S11_CMP_p,
+	input S11_CMP_n,	
+	input S21_CMP_p,
+	input S21_CMP_n,	
+	input ref_CMP_p,
+	input ref_CMP_n,
+	input gthrxn_in,
+	input gthrxp_in,
+	output gthtxn_out,
+	output gthtxp_out,
+	output S11_swing,
+	output S21_swing,
+	output ref_swing,
 	output ref_clk_fb_good,
 	output system_clk_good,
-	output LE_p,
-	output LE_n,
-	output tri_data
+	output LE_ref_p,
+	output LE_ref_n,
+	output LE_S21_p,
+	output LE_S21_n,
+	output LE_S11_p,
+	output LE_S11_n,
+	output triger
     );
 	wire gthrefclk00_in;
 	wire gtrefclk00_to_pl;
 	wire ref_clk_fb;
 	wire free_run_clk;
 	wire free_run_rst_n;
-	wire REF_CLK_IN;
-	wire REF_CLK;
-	wire imp_clk_s;
 
-	wire swing_out;
-	wire cmp_data;
-	wire s11_rx;
-	wire s21_rx;
 	wire [31:0] GTH_DATA;
 
-	wire [6:0] mmcm_drp_daddr;
-	wire [15:0] mmcm_drp_do;
-	wire [15:0] mmcm_drp_di;
-	wire mmcm_drp_den;
-	wire mmcm_drp_dwe;
-	wire mmcm_drp_drdy;
+	wire CMP_DATA_ref;
+	wire CMP_DATA_S11;
+	wire CMP_DATA_S21;
 
-	OBUF #(
-	.DRIVE(12),   // Specify the output drive strength
-	.IOSTANDARD("DEFAULT"), // Specify the output I/O standard
-	.SLEW("FAST") // Specify the output slew rate
-	) OBUF_inst_sma (
-	.O(sma_swing),     // Buffer output (connect directly to top-level port)
-	.I(swing_out)      // Buffer input
+	IBUFDS IBUFDS_ref (
+		.O(CMP_DATA_ref),   // 1-bit output: Buffer output
+		.I(ref_CMP_p),   // 1-bit input: Diff_p buffer input (connect directly to top-level port)
+		.IB(ref_CMP_n)  // 1-bit input: Diff_n buffer input (connect directly to top-level port)
+	);
+
+	IBUFDS IBUFDS_S11 (
+		.O(CMP_DATA_S11),   // 1-bit output: Buffer output
+		.I(S11_CMP_p),   // 1-bit input: Diff_p buffer input (connect directly to top-level port)
+		.IB(S11_CMP_n)  // 1-bit input: Diff_n buffer input (connect directly to top-level port)
+	);
+
+	IBUFDS IBUFDS_S21 (
+		.O(CMP_DATA_S21),   // 1-bit output: Buffer output
+		.I(S21_CMP_p),   // 1-bit input: Diff_p buffer input (connect directly to top-level port)
+		.IB(S21_CMP_n)  // 1-bit input: Diff_n buffer input (connect directly to top-level port)
 	);
 
 	OBUFDS #(
 		.IOSTANDARD("DEFAULT"), // Specify the output I/O standard
 		.SLEW("FAST")           // Specify the output slew rate
-	) OBUFDS_inst (
-		.O(LE_p),     // Diff_p output (connect directly to top-level port)
-		.OB(LE_n),   // Diff_n output (connect directly to top-level port)
-		.I(~shifting_clk)      // Buffer input
+	) OBUFDS_ref (
+		.O(LE_ref_p),     // Diff_p output (connect directly to top-level port)
+		.OB(LE_ref_n),   // Diff_n output (connect directly to top-level port)
+		.I(shifting_clk)      // Buffer input
 	);
-	wire [7:0] CMP_DATA_0;
-	// ila_0 your_instance_name (
-	// 	.clk(ref_clk_fb), // input wire clk
+	OBUFDS #(
+		.IOSTANDARD("DEFAULT"), // Specify the output I/O standard
+		.SLEW("FAST")           // Specify the output slew rate
+	) OBUFDS_S11 (
+		.O(LE_S11_p),     // Diff_p output (connect directly to top-level port)
+		.OB(LE_S11_n),   // Diff_n output (connect directly to top-level port)
+		.I(shifting_clk)      // Buffer input
+	);
+	OBUFDS #(
+		.IOSTANDARD("DEFAULT"), // Specify the output I/O standard
+		.SLEW("FAST")           // Specify the output slew rate
+	) OBUFDS_S21 (
+		.O(LE_S21_p),     // Diff_p output (connect directly to top-level port)
+		.OB(LE_S21_n),   // Diff_n output (connect directly to top-level port)
+		.I(shifting_clk)      // Buffer input
+	);
 
 
-	// 	.probe0(cmp_data_r), // input wire [0:0]  probe0  
-	// 	.probe1(CMP_DATA_0), // input wire [7:0]  probe1
-	// 	.probe2(s11_rx), // input wire [0:0]  probe2 
-	// 	.probe3(1'b1) // input wire [0:0]  probe3
-	// );
-	reg cmp_data_r;
+	reg cmp_data_ref_r;
 	always @(posedge shifting_clk) begin
-		cmp_data_r <= cmp_data;
+		cmp_data_ref_r <= CMP_DATA_ref;
+	end
+	reg cmp_data_S11_r;
+	always @(posedge shifting_clk) begin
+		cmp_data_S11_r <= CMP_DATA_S11;
+	end
+	reg cmp_data_S21_r;
+	always @(posedge shifting_clk) begin
+		cmp_data_S21_r <= CMP_DATA_S21;
 	end
 
 	ZCU104_MCU ZCU104_MCU_i(
-		.tri_data (),
-		.GTH_DATA (GTH_DATA),
-		.CMP_DATA_0(CMP_DATA_0),
-		.CMP_DATA_1(cmp_data_r),
-		.REF_CLK_IN(fixed_clk),
 		.free_run_clk(free_run_clk),
-		.free_run_rst_n(free_run_rst_n),
-		.mmcm_drp_clk(mmcm_drp_clk),
-		.mmcm_drp_daddr(mmcm_drp_daddr),
-		.mmcm_drp_den(mmcm_drp_den),
-		.mmcm_drp_di(mmcm_drp_di),
-		.mmcm_drp_do(mmcm_drp_do),
-		.mmcm_drp_drdy(mmcm_drp_drdy),
-		.mmcm_drp_dwe(mmcm_drp_dwe),
-		.ps_clk(ps_clk),
-		.ps_done(ps_done),
-		.ps_en(ps_en),
-		.ps_incdec(ps_incdec),
-		.ref_clk_fb(ref_clk_fb),
-		.reset(reset),
-		.shifting_clk_0(shifting_clk),
-		.ref_clk_fb_good(ref_clk_fb_good),
-		.system_clk_good(system_clk_good)
-	);
-	ETS_Serve_top inst_ETS_Serve_top(
-		.free_run_rst (~free_run_rst_n),
-		.free_run_clk (free_run_clk),	
-		.op_clk		  (ref_clk_fb),
-		.clk_in_p     (clk_in_p),
-		.clk_in_n     (clk_in_n),
-		.hp_rx_p      (),
-		.hp_rx_n      (),
-		.rx_clk       (),
-		.rx_data      (CMP_DATA_0),
-		.drp_daddr    (mmcm_drp_daddr),
-		.drp_di       (mmcm_drp_di),
-		.drp_do       (mmcm_drp_do),
-		.drp_den      (mmcm_drp_den),
-		.drp_dwe      (mmcm_drp_dwe),
-		.drp_drdy     (mmcm_drp_drdy),
-		.drp_dclk     (mmcm_drp_clk),
-		.s11_rx_p	  (),
-		.s11_rx_n	  (),
-		.s21_rx_p	  (),
-		.s21_rx_n	  (),
+		.gth_data(GTH_DATA),
+       	.CMP_DATA_S11(cmp_data_S11_r),
+        .CMP_DATA_S21(cmp_data_S21_r),
+        .CMP_DATA_ref(cmp_data_ref_r),
+        .S11_swing(S11_swing),
+        .S21_swing(S21_swing),
+        .free_run_rst_n(free_run_rst_n),
+        .ref_clk_fb(ref_clk_fb),
+        .ref_clk_fb_good(ref_clk_fb_good),
+        .ref_swing(ref_swing),
+        .reset(reset),
+        .shifting_clk(shifting_clk),
+        .system_clk_good(system_clk_good),
+        .triger(triger)
+    );
+	
 
-		.cmp_in_p	  (cmp_in_p),
-	    .cmp_in_n	  (cmp_in_n),
-	    .cmp_data	  (cmp_data),
-		.s11_rx		  (),
-		.s21_rx		  (),
-		.ps_en        (ps_en),
-		.ps_incdec    (ps_incdec),
-		.ps_clk       (ps_clk),
-		.ps_done      (ps_done),
-		.locked       (locked),
-		.shifting_clk (shifting_clk),
-		.swing_out    (swing_out),
-		.fixed_clk    (fixed_clk),
-		.imp_clk      (tri_data)
+	gtwizard_ultrascale_0 GTH_inst (
+		.gtwiz_userclk_tx_reset_in(~free_run_rst_n),                    // input wire [0 : 0] gtwiz_userclk_tx_reset_in
+		.gtwiz_userclk_tx_srcclk_out(),                // output wire [0 : 0] gtwiz_userclk_tx_srcclk_out
+		.gtwiz_userclk_tx_usrclk_out(),                // output wire [0 : 0] gtwiz_userclk_tx_usrclk_out
+		.gtwiz_userclk_tx_usrclk2_out(),              // output wire [0 : 0] gtwiz_userclk_tx_usrclk2_out
+		.gtwiz_userclk_tx_active_out(),                // output wire [0 : 0] gtwiz_userclk_tx_active_out
+		.gtwiz_userclk_rx_reset_in(~free_run_rst_n),                    // input wire [0 : 0] gtwiz_userclk_rx_reset_in
+		.gtwiz_userclk_rx_srcclk_out(),                // output wire [0 : 0] gtwiz_userclk_rx_srcclk_out
+		.gtwiz_userclk_rx_usrclk_out(ref_clk_fb),                // output wire [0 : 0] gtwiz_userclk_rx_usrclk_out
+		.gtwiz_userclk_rx_usrclk2_out(),              // output wire [0 : 0] gtwiz_userclk_rx_usrclk2_out
+		.gtwiz_userclk_rx_active_out(),                // output wire [0 : 0] gtwiz_userclk_rx_active_out
+		.gtwiz_reset_clk_freerun_in(free_run_clk),                  // input wire [0 : 0] gtwiz_reset_clk_freerun_in
+		.gtwiz_reset_all_in(~free_run_rst_n),                                  // input wire [0 : 0] gtwiz_reset_all_in
+		.gtwiz_reset_tx_pll_and_datapath_in(~free_run_rst_n),  // input wire [0 : 0] gtwiz_reset_tx_pll_and_datapath_in
+		.gtwiz_reset_tx_datapath_in(~free_run_rst_n),                  // input wire [0 : 0] gtwiz_reset_tx_datapath_in
+		.gtwiz_reset_rx_pll_and_datapath_in(~free_run_rst_n),  // input wire [0 : 0] gtwiz_reset_rx_pll_and_datapath_in
+		.gtwiz_reset_rx_datapath_in(~free_run_rst_n),                  // input wire [0 : 0] gtwiz_reset_rx_datapath_in
+		.gtwiz_reset_rx_cdr_stable_out(),            // output wire [0 : 0] gtwiz_reset_rx_cdr_stable_out
+		.gtwiz_reset_tx_done_out(),                        // output wire [0 : 0] gtwiz_reset_tx_done_out
+		.gtwiz_reset_rx_done_out(),                        // output wire [0 : 0] gtwiz_reset_rx_done_out
+		.gtwiz_userdata_tx_in(GTH_DATA),                              // input wire [31 : 0] gtwiz_userdata_tx_in
+		.gtwiz_userdata_rx_out(),                            // output wire [31 : 0] gtwiz_userdata_rx_out
+		.gtrefclk01_in(gtrefclk00_in),                                            // input wire [0 : 0] gtrefclk00_in
+		.qpll1outclk_out(),                                        // output wire [0 : 0] qpll1outclk_out
+
+		.gthrxn_in(gthrxn_in),                                                    // input wire [0 : 0] gthrxn_in
+		.gthrxp_in(gthrxp_in),                                                    // input wire [0 : 0] gthrxp_in
+		.gthtxn_out(gthtxn_out),                                                  // output wire [0 : 0] gthtxn_out
+		.gthtxp_out(gthtxp_out),                                                  // output wire [0 : 0] gthtxp_out
+		.gtpowergood_out(),                                        // output wire [0 : 0] gtpowergood_out
+		.rxpmaresetdone_out(),                                  // output wire [0 : 0] rxpmaresetdone_out
+		.txpmaresetdone_out()                                  // output wire [0 : 0] txpmaresetdone_out
 	);
-	reg [31:0] gth_inv_data;
-	reg invert;
-	always @ (posedge REF_CLK or negedge free_run_rst_n) begin
-		if(~free_run_rst_n) begin
-			gth_inv_data <= 3;
-		end
-		else begin			
-			gth_inv_data <= gth_inv_data * 123 + 59;
-		end
-	end
 
 	IBUFDS_GTE4 #(
 		.REFCLK_EN_TX_PATH(1'b0),   // Refer to Transceiver User Guide
@@ -179,13 +183,13 @@ module ZCU104_AntiProbetop(
 	);
 
 
-	BUFG_GT BUFG_GT_inst (
-		.O(ref_clk_fb),             // 1-bit output: Buffer
-		.CE(1),           // 1-bit input: Buffer enable
-		.CEMASK(1'b1),   // 1-bit input: CE Mask
-		.CLR(1'b0),         // 1-bit input: Asynchronous clear
-		.CLRMASK(1'b0), // 1-bit input: CLR Mask
-		.DIV(3'b000),         // 3-bit input: Dynamic divide Value
-		.I(gtrefclk00_to_pl)              // 1-bit input: Buffer
-	);
+	// BUFG_GT BUFG_GT_inst (
+	// 	.O(ref_clk_fb),             // 1-bit output: Buffer
+	// 	.CE(1),           // 1-bit input: Buffer enable
+	// 	.CEMASK(1'b1),   // 1-bit input: CE Mask
+	// 	.CLR(1'b0),         // 1-bit input: Asynchronous clear
+	// 	.CLRMASK(1'b0), // 1-bit input: CLR Mask
+	// 	.DIV(3'b000),         // 3-bit input: Dynamic divide Value
+	// 	.I(gtrefclk00_to_pl)              // 1-bit input: Buffer
+	// );
 endmodule

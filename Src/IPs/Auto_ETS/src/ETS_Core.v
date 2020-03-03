@@ -31,7 +31,6 @@ module ETS_Core(
 	input en,
 	input ready,
 	output reg valid,
-	input trigger,
 	output reg ps_en,
     output reg ps_incdec,
     output ps_clk,
@@ -102,7 +101,6 @@ module ETS_Core(
 		.Average (Average),
 		.data_in (data_in),
 		.data    (data),
-		.trigger (trigger),
 		.start   (start),
 		.done    (done)
 	);

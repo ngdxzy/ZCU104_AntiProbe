@@ -71,10 +71,10 @@ module Counter_32 (
 	adder_8 inst_adder_23_16 (.clk(clk), .rst_n(rst_n), .counter(counter[23:16]), .C(C_23_24), .en(en & C_15_16), .clr(clr));
 	adder_8 inst_adder_31_24 (.clk(clk), .rst_n(rst_n), .counter(counter[31:24]), .C(), .en(en & C_23_24), .clr(clr));
 
-	wire cmp_0 = counter[7:0] == cmp_data[7:0];
-	wire cmp_1 = counter[15:8] == cmp_data[15:8];
-	wire cmp_2 = counter[23:16] == cmp_data[23:16];
-	wire cmp_3 = counter[31:24] == cmp_data[31:24];
+	wire cmp_0 = counter[7:0] >= cmp_data[7:0];
+	wire cmp_1 = counter[15:8] >= cmp_data[15:8];
+	wire cmp_2 = counter[23:16] >= cmp_data[23:16];
+	wire cmp_3 = counter[31:24] >= cmp_data[31:24];
 	assign data_out = counter;
 	assign full = cmp_3 & cmp_2 & cmp_1 & cmp_0;
 endmodule
@@ -85,7 +85,6 @@ module ETS_Adder(
 	input [31:0] Average,
 
 	input data_in,
-	input trigger,
 	output [31:0] data,
 
 	input start,
@@ -138,7 +137,7 @@ module ETS_Adder(
 		end
 		endcase
 	end
-	wire run_enable = en && trigger;
+	wire run_enable = en;
 	Counter_32 U_Counter_d(
 		.clk(clk),
 		.rst_n(~reset),

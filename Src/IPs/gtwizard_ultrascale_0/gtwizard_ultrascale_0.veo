@@ -1,4 +1,4 @@
-// (c) Copyright 1995-2019 Xilinx, Inc. All rights reserved.
+// (c) Copyright 1995-2020 Xilinx, Inc. All rights reserved.
 // 
 // This file contains confidential and proprietary information
 // of Xilinx, Inc. and is protected under U.S. and
@@ -55,8 +55,16 @@
 
 //----------- Begin Cut here for INSTANTIATION Template ---// INST_TAG
 gtwizard_ultrascale_0 your_instance_name (
-  .gtwiz_userclk_tx_active_in(gtwiz_userclk_tx_active_in),                  // input wire [0 : 0] gtwiz_userclk_tx_active_in
-  .gtwiz_userclk_rx_active_in(gtwiz_userclk_rx_active_in),                  // input wire [0 : 0] gtwiz_userclk_rx_active_in
+  .gtwiz_userclk_tx_reset_in(gtwiz_userclk_tx_reset_in),                    // input wire [0 : 0] gtwiz_userclk_tx_reset_in
+  .gtwiz_userclk_tx_srcclk_out(gtwiz_userclk_tx_srcclk_out),                // output wire [0 : 0] gtwiz_userclk_tx_srcclk_out
+  .gtwiz_userclk_tx_usrclk_out(gtwiz_userclk_tx_usrclk_out),                // output wire [0 : 0] gtwiz_userclk_tx_usrclk_out
+  .gtwiz_userclk_tx_usrclk2_out(gtwiz_userclk_tx_usrclk2_out),              // output wire [0 : 0] gtwiz_userclk_tx_usrclk2_out
+  .gtwiz_userclk_tx_active_out(gtwiz_userclk_tx_active_out),                // output wire [0 : 0] gtwiz_userclk_tx_active_out
+  .gtwiz_userclk_rx_reset_in(gtwiz_userclk_rx_reset_in),                    // input wire [0 : 0] gtwiz_userclk_rx_reset_in
+  .gtwiz_userclk_rx_srcclk_out(gtwiz_userclk_rx_srcclk_out),                // output wire [0 : 0] gtwiz_userclk_rx_srcclk_out
+  .gtwiz_userclk_rx_usrclk_out(gtwiz_userclk_rx_usrclk_out),                // output wire [0 : 0] gtwiz_userclk_rx_usrclk_out
+  .gtwiz_userclk_rx_usrclk2_out(gtwiz_userclk_rx_usrclk2_out),              // output wire [0 : 0] gtwiz_userclk_rx_usrclk2_out
+  .gtwiz_userclk_rx_active_out(gtwiz_userclk_rx_active_out),                // output wire [0 : 0] gtwiz_userclk_rx_active_out
   .gtwiz_reset_clk_freerun_in(gtwiz_reset_clk_freerun_in),                  // input wire [0 : 0] gtwiz_reset_clk_freerun_in
   .gtwiz_reset_all_in(gtwiz_reset_all_in),                                  // input wire [0 : 0] gtwiz_reset_all_in
   .gtwiz_reset_tx_pll_and_datapath_in(gtwiz_reset_tx_pll_and_datapath_in),  // input wire [0 : 0] gtwiz_reset_tx_pll_and_datapath_in
@@ -68,21 +76,15 @@ gtwizard_ultrascale_0 your_instance_name (
   .gtwiz_reset_rx_done_out(gtwiz_reset_rx_done_out),                        // output wire [0 : 0] gtwiz_reset_rx_done_out
   .gtwiz_userdata_tx_in(gtwiz_userdata_tx_in),                              // input wire [31 : 0] gtwiz_userdata_tx_in
   .gtwiz_userdata_rx_out(gtwiz_userdata_rx_out),                            // output wire [31 : 0] gtwiz_userdata_rx_out
-  .gtrefclk00_in(gtrefclk00_in),                                            // input wire [0 : 0] gtrefclk00_in
-  .qpll0outclk_out(qpll0outclk_out),                                        // output wire [0 : 0] qpll0outclk_out
-  .qpll0outrefclk_out(qpll0outrefclk_out),                                  // output wire [0 : 0] qpll0outrefclk_out
+  .gtrefclk01_in(gtrefclk01_in),                                            // input wire [0 : 0] gtrefclk01_in
+  .qpll1outclk_out(qpll1outclk_out),                                        // output wire [0 : 0] qpll1outclk_out
+  .qpll1outrefclk_out(qpll1outrefclk_out),                                  // output wire [0 : 0] qpll1outrefclk_out
   .gthrxn_in(gthrxn_in),                                                    // input wire [0 : 0] gthrxn_in
   .gthrxp_in(gthrxp_in),                                                    // input wire [0 : 0] gthrxp_in
-  .rxusrclk_in(rxusrclk_in),                                                // input wire [0 : 0] rxusrclk_in
-  .rxusrclk2_in(rxusrclk2_in),                                              // input wire [0 : 0] rxusrclk2_in
-  .txusrclk_in(txusrclk_in),                                                // input wire [0 : 0] txusrclk_in
-  .txusrclk2_in(txusrclk2_in),                                              // input wire [0 : 0] txusrclk2_in
   .gthtxn_out(gthtxn_out),                                                  // output wire [0 : 0] gthtxn_out
   .gthtxp_out(gthtxp_out),                                                  // output wire [0 : 0] gthtxp_out
   .gtpowergood_out(gtpowergood_out),                                        // output wire [0 : 0] gtpowergood_out
-  .rxoutclk_out(rxoutclk_out),                                              // output wire [0 : 0] rxoutclk_out
   .rxpmaresetdone_out(rxpmaresetdone_out),                                  // output wire [0 : 0] rxpmaresetdone_out
-  .txoutclk_out(txoutclk_out),                                              // output wire [0 : 0] txoutclk_out
   .txpmaresetdone_out(txpmaresetdone_out)                                  // output wire [0 : 0] txpmaresetdone_out
 );
 // INST_TAG_END ------ End INSTANTIATION Template ---------

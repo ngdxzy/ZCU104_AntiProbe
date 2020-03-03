@@ -1,4 +1,4 @@
--- (c) Copyright 1995-2019 Xilinx, Inc. All rights reserved.
+-- (c) Copyright 1995-2020 Xilinx, Inc. All rights reserved.
 -- 
 -- This file contains confidential and proprietary information
 -- of Xilinx, Inc. and is protected under U.S. and
@@ -54,8 +54,16 @@
 ------------- Begin Cut here for COMPONENT Declaration ------ COMP_TAG
 COMPONENT gtwizard_ultrascale_0
   PORT (
-    gtwiz_userclk_tx_active_in : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
-    gtwiz_userclk_rx_active_in : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gtwiz_userclk_tx_reset_in : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gtwiz_userclk_tx_srcclk_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gtwiz_userclk_tx_usrclk_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gtwiz_userclk_tx_usrclk2_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gtwiz_userclk_tx_active_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gtwiz_userclk_rx_reset_in : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gtwiz_userclk_rx_srcclk_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gtwiz_userclk_rx_usrclk_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gtwiz_userclk_rx_usrclk2_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gtwiz_userclk_rx_active_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
     gtwiz_reset_clk_freerun_in : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
     gtwiz_reset_all_in : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
     gtwiz_reset_tx_pll_and_datapath_in : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
@@ -67,21 +75,15 @@ COMPONENT gtwizard_ultrascale_0
     gtwiz_reset_rx_done_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
     gtwiz_userdata_tx_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
     gtwiz_userdata_rx_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-    gtrefclk00_in : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
-    qpll0outclk_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
-    qpll0outrefclk_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gtrefclk01_in : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+    qpll1outclk_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
+    qpll1outrefclk_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
     gthrxn_in : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
     gthrxp_in : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
-    rxusrclk_in : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
-    rxusrclk2_in : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
-    txusrclk_in : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
-    txusrclk2_in : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
     gthtxn_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
     gthtxp_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
     gtpowergood_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
-    rxoutclk_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
     rxpmaresetdone_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
-    txoutclk_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
     txpmaresetdone_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0)
   );
 END COMPONENT;
@@ -93,8 +95,16 @@ END COMPONENT;
 ------------- Begin Cut here for INSTANTIATION Template ----- INST_TAG
 your_instance_name : gtwizard_ultrascale_0
   PORT MAP (
-    gtwiz_userclk_tx_active_in => gtwiz_userclk_tx_active_in,
-    gtwiz_userclk_rx_active_in => gtwiz_userclk_rx_active_in,
+    gtwiz_userclk_tx_reset_in => gtwiz_userclk_tx_reset_in,
+    gtwiz_userclk_tx_srcclk_out => gtwiz_userclk_tx_srcclk_out,
+    gtwiz_userclk_tx_usrclk_out => gtwiz_userclk_tx_usrclk_out,
+    gtwiz_userclk_tx_usrclk2_out => gtwiz_userclk_tx_usrclk2_out,
+    gtwiz_userclk_tx_active_out => gtwiz_userclk_tx_active_out,
+    gtwiz_userclk_rx_reset_in => gtwiz_userclk_rx_reset_in,
+    gtwiz_userclk_rx_srcclk_out => gtwiz_userclk_rx_srcclk_out,
+    gtwiz_userclk_rx_usrclk_out => gtwiz_userclk_rx_usrclk_out,
+    gtwiz_userclk_rx_usrclk2_out => gtwiz_userclk_rx_usrclk2_out,
+    gtwiz_userclk_rx_active_out => gtwiz_userclk_rx_active_out,
     gtwiz_reset_clk_freerun_in => gtwiz_reset_clk_freerun_in,
     gtwiz_reset_all_in => gtwiz_reset_all_in,
     gtwiz_reset_tx_pll_and_datapath_in => gtwiz_reset_tx_pll_and_datapath_in,
@@ -106,21 +116,15 @@ your_instance_name : gtwizard_ultrascale_0
     gtwiz_reset_rx_done_out => gtwiz_reset_rx_done_out,
     gtwiz_userdata_tx_in => gtwiz_userdata_tx_in,
     gtwiz_userdata_rx_out => gtwiz_userdata_rx_out,
-    gtrefclk00_in => gtrefclk00_in,
-    qpll0outclk_out => qpll0outclk_out,
-    qpll0outrefclk_out => qpll0outrefclk_out,
+    gtrefclk01_in => gtrefclk01_in,
+    qpll1outclk_out => qpll1outclk_out,
+    qpll1outrefclk_out => qpll1outrefclk_out,
     gthrxn_in => gthrxn_in,
     gthrxp_in => gthrxp_in,
-    rxusrclk_in => rxusrclk_in,
-    rxusrclk2_in => rxusrclk2_in,
-    txusrclk_in => txusrclk_in,
-    txusrclk2_in => txusrclk2_in,
     gthtxn_out => gthtxn_out,
     gthtxp_out => gthtxp_out,
     gtpowergood_out => gtpowergood_out,
-    rxoutclk_out => rxoutclk_out,
     rxpmaresetdone_out => rxpmaresetdone_out,
-    txoutclk_out => txoutclk_out,
     txpmaresetdone_out => txpmaresetdone_out
   );
 -- INST_TAG_END ------ End INSTANTIATION Template ---------
