@@ -228,7 +228,7 @@ module Auto_ETS#(
 	assign T_ref = slv_reg1[15:0];
 	assign T_S11 = slv_reg2[15:0];
 	assign T_S21 = slv_reg3[15:0];
-
+	assign gth_data = slv_reg7;
 	wire ps_en;
     wire ps_incdec;
     wire ps_clk;
