@@ -39,55 +39,27 @@ module ETS_System(
 	input w_occur_ref,
 	input r_occur_ref,
 	output w_ready_ref,
-	output r_valid_ref,
-
-    input CMP_DATA_S11,
-    input [7:0] T_S11,
-    output [15:0] A_S11,
-	input [9:0] waddr_S11,
-	input [9:0] raddr_S11,
-	output [31:0] rdata_S11,
-	input w_occur_S11,
-	input r_occur_S11,
-	output w_ready_S11,
-	output r_valid_S11,
-
-    input CMP_DATA_S21,
-    input [7:0] T_S21,
-    output [15:0] A_S21,
-	input [9:0] waddr_S21,
-	input [9:0] raddr_S21,
-	output [31:0] rdata_S21,
-	input w_occur_S21,
-	input r_occur_S21,
-	output w_ready_S21,
-	output r_valid_S21
-    );
+	output r_valid_ref
+	);
 
 
 	localparam MAX_ADDR = 10'd616;
-
+	wire [2:0] w_buffer_id_ref,r_buffer_id_ref;
 	wire valid_ref;
-	wire valid_S11;
-	wire valid_S21;
 
 	wire [31:0] data_ref;
-	wire [31:0] data_S11;
-	wire [31:0] data_S21;
 
 	reg ready;
-	reg [8:0]w_addr;
+	reg [9:0]w_addr;
 	reg clr;
 	reg en_c;
 	reg wea;
 	reg w_request;
-	wire frame_ready;
+	wire frame_ready_ref;
 	reg [2:0] state,nextstate;
-	wire r_finish_ref,r_finish_S11,r_finish_S21;
+	wire r_finish_ref;
 
 	VernierPtMap inst_VernierPtMap_ref (.T(T_ref), .Average(A_ref));
-	VernierPtMap inst_VernierPtMap_S11 (.T(T_S11), .Average(A_S11));
-	VernierPtMap inst_VernierPtMap_S21 (.T(T_S21), .Average(A_S21));
 
 
 	localparam IDLE = 3'd1;
@@ -117,7 +89,7 @@ module ETS_System(
 		w_request = 0;
 		case(state)
 			IDLE:begin
-				if(valid_ref & valid_S21 & valid_S11) begin
+				if(valid_ref) begin
 					nextstate = WRITING;
 				end
 			end
@@ -143,14 +115,14 @@ module ETS_System(
 			end
 			DONE:begin
 				ready = 1;
-				if((~valid_S21) & (~valid_S11) & (~valid_ref)) begin
+				if(~valid_ref) begin
 					nextstate = IDLE;
 				end
 			end
 			REQUEST:begin
 				w_request = 1;
 				clr = 1;
-				if(frame_ready) begin
+				if(frame_ready_ref) begin
 					nextstate = DONE;
 				end
 			end
@@ -184,54 +156,23 @@ module ETS_System(
 		.en        (en),
 		.ready     (ready),
 		.valid     (valid_ref),
-		.ps_en     (),
-		.ps_incdec (),
-		.ps_clk    (),
-		.ps_done   (ps_done)
-	);
-
-
-	ETS_Core inst_ETS_Core_S11(
-		.clk       (shifting_clk),
-		.reset     (reset),
-		.Average   (A_S11),
-		.data_in   (CMP_DATA_S11),
-		.data      (data_S11),
-		.en        (en),
-		.ready     (ready),
-		.valid     (valid_S11),
-		.ps_en     (),
-		.ps_incdec (),
-		.ps_clk    (),
-		.ps_done   (ps_done)
-	);
-
-	ETS_Core inst_ETS_Core_S21(
-		.clk       (shifting_clk),
-		.reset     (reset),
-		.Average   (A_S21),
-		.data_in   (CMP_DATA_S21),
-		.data      (data_S21),
-		.en        (en),
-		.ready     (ready),
-		.valid     (valid_S21),
 		.ps_en     (ps_en),
 		.ps_incdec (ps_incdec),
 		.ps_clk    (ps_clk),
 		.ps_done   (ps_done)
 	);
 
-	TripleBufferController inst_TripleBufferController(
-		.w_buffer_id   (w_buffer_id),
-		.r_buffer_id   (r_buffer_id),
+
+	TripleBufferController inst_TripleBufferController_ref(
+		.w_buffer_id   (w_buffer_id_ref),
+		.r_buffer_id   (r_buffer_id_ref),
 		.w_clk         (shifting_clk),
 		.r_clk         (sys_clk),
 		.reset         (reset),
 		.w_request     (w_request),
-		.w_frame_ready (frame_ready),
-		.r_finish      (r_finish_ref & r_finish_S11 & r_finish_S21)
+		.w_frame_ready (frame_ready_ref),
+		.r_finish      (r_finish_ref)
 	);
-
 	TripleBuffer #(
 			.MAX_TAP(MAX_ADDR)
 	)inst_TripleBuffer_ref(
@@ -241,8 +182,8 @@ module ETS_System(
 		.raddr       (raddr_ref),
 		.wdata       (data_ref),
 		.rdata       (rdata_ref),
-		.w_buffer_id (w_buffer_id),
-		.r_buffer_id (r_buffer_id),
+		.w_buffer_id (w_buffer_id_ref),
+		.r_buffer_id (r_buffer_id_ref),
 		.w_occur     (wea),
 		.r_occur     (r_occur_ref),
 		.w_ready     (w_ready_ref),
@@ -250,39 +191,4 @@ module ETS_System(
 		.r_finish    (r_finish_ref)
 	);
 
-	TripleBuffer #(
-			.MAX_TAP(MAX_ADDR)
-	)inst_TripleBuffer_S11(
-		.w_clk       (shifting_clk),
-		.r_clk       (sys_clk),
-		.waddr       (w_addr),
-		.raddr       (raddr_S11),
-		.wdata       (data_S11),
-		.rdata       (rdata_S11),
-		.w_buffer_id (w_buffer_id),
-		.r_buffer_id (r_buffer_id),
-		.w_occur     (wea),
-		.r_occur     (r_occur_S11),
-		.w_ready     (w_ready_S11),
-		.r_valid     (r_valid_S11),
-		.r_finish    (r_finish_S11)
-	);
-
-	TripleBuffer #(
-			.MAX_TAP(MAX_ADDR)
-	)inst_TripleBuffer_S21(
-		.w_clk       (shifting_clk),
-		.r_clk       (sys_clk),
-		.waddr       (w_addr),
-		.raddr       (raddr_S21),
-		.wdata       (data_S21),
-		.rdata       (rdata_S21),
-		.w_buffer_id (w_buffer_id),
-		.r_buffer_id (r_buffer_id),
-		.w_occur     (wea),
-		.r_occur     (r_occur_S21),
-		.w_ready     (w_ready_S21),
-		.r_valid     (r_valid_S21),
-		.r_finish    (r_finish_S21)
-	);
 endmodule

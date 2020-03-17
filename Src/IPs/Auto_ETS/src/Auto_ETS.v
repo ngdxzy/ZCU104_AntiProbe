@@ -25,8 +25,10 @@ module Auto_ETS#(
 	parameter CLK_IN_PEO = 6.4,
 	parameter integer VCO_MUL = 10,
 	parameter integer VCO_DIV = 1,
-	parameter integer FIXED_DIV = 11,
-	parameter integer SWING_DIV = 12,
+	parameter FIXED_DIV = 11,
+	parameter SWING_DIV = 40,
+
+	parameter IMP_DIV = 11.125,
 
 	parameter integer C_S_AXI_DATA_WIDTH	= 32,
 	parameter integer C_S_AXI_ADDR_WIDTH	= 6,
@@ -34,7 +36,7 @@ module Auto_ETS#(
 	parameter DATA_WIDTH       = 32,
 	parameter S_AXI_ADDR_WIDTH     = 12,               
 	parameter S_AXI_DATA_WIDTH     = 32,
-	parameter IMP_PHASE = 11.125
+	parameter IMP_PHASE = 0.091
 	)(
 
 	input free_run_clk,
@@ -42,9 +44,7 @@ module Auto_ETS#(
 	output system_clk,
 	output triger,
 
-	output ref_swing,
-	output S11_swing,
-	output S21_swing,
+	output swing_clk,
 
 	output [31:0] gth_data,
 
@@ -74,62 +74,6 @@ module Auto_ETS#(
     output                            S_AXI_DATA_REF_wready,
     input                             S_AXI_DATA_REF_wvalid,
     input  [S_AXI_DATA_WIDTH/8-1:0]   S_AXI_DATA_REF_wstrb,
-
-    //
-    input                             S_AXI_DATA_S11_aclk,
-    input                             S_AXI_DATA_S11_aresetn,
-
-    input  [S_AXI_ADDR_WIDTH-1:0]     S_AXI_DATA_S11_araddr,
-    output 	                          S_AXI_DATA_S11_arready,
-    input                             S_AXI_DATA_S11_arvalid,
-    input  [2:0]                      S_AXI_DATA_S11_arprot,
-
-    input [S_AXI_ADDR_WIDTH-1:0]      S_AXI_DATA_S11_awaddr,
-    output 	                          S_AXI_DATA_S11_awready,
-    input                             S_AXI_DATA_S11_awvalid,
-    input  [2:0]                      S_AXI_DATA_S11_awprot,
-
-    output  [1:0]                     S_AXI_DATA_S11_bresp,  
-    input                             S_AXI_DATA_S11_bready,
-    output 	                          S_AXI_DATA_S11_bvalid,
-
-    output 	   [S_AXI_DATA_WIDTH-1:0] S_AXI_DATA_S11_rdata,
-    input                             S_AXI_DATA_S11_rready,
-    output 	                          S_AXI_DATA_S11_rvalid,
-    output  [1:0]                     S_AXI_DATA_S11_rresp,
-
-    input  [S_AXI_DATA_WIDTH-1:0]     S_AXI_DATA_S11_wdata,
-    output                            S_AXI_DATA_S11_wready,
-    input                             S_AXI_DATA_S11_wvalid,
-    input  [S_AXI_DATA_WIDTH/8-1:0]   S_AXI_DATA_S11_wstrb,
-	//
-	input                             S_AXI_DATA_S21_aclk,
-    input                             S_AXI_DATA_S21_aresetn,
-
-    input  [S_AXI_ADDR_WIDTH-1:0]     S_AXI_DATA_S21_araddr,
-    output 	                          S_AXI_DATA_S21_arready,
-    input                             S_AXI_DATA_S21_arvalid,
-    input  [2:0]                      S_AXI_DATA_S21_arprot,
-
-    input [S_AXI_ADDR_WIDTH-1:0]      S_AXI_DATA_S21_awaddr,
-    output 	                          S_AXI_DATA_S21_awready,
-    input                             S_AXI_DATA_S21_awvalid,
-    input  [2:0]                      S_AXI_DATA_S21_awprot,
-
-    output  [1:0]                     S_AXI_DATA_S21_bresp,  
-    input                             S_AXI_DATA_S21_bready,
-    output 	                          S_AXI_DATA_S21_bvalid,
-
-    output 	   [S_AXI_DATA_WIDTH-1:0] S_AXI_DATA_S21_rdata,
-    input                             S_AXI_DATA_S21_rready,
-    output 	                          S_AXI_DATA_S21_rvalid,
-    output  [1:0]                     S_AXI_DATA_S21_rresp,
-
-    input  [S_AXI_DATA_WIDTH-1:0]     S_AXI_DATA_S21_wdata,
-    output                            S_AXI_DATA_S21_wready,
-    input                             S_AXI_DATA_S21_wvalid,
-    input  [S_AXI_DATA_WIDTH/8-1:0]   S_AXI_DATA_S21_wstrb,
-	//
 
 
 	input CMP_DATA_ref,
@@ -177,18 +121,10 @@ module Auto_ETS#(
 	wire w_ready_ref,r_valid_ref;
 	wire [31:0] w_data_ref,r_data_ref;
 
-	wire [9:0] w_addr_S11,r_addr_S11;
-	wire w_occur_S11,r_occur_S11;
-	wire w_ready_S11,r_valid_S11;
-	wire [31:0] w_data_S11,r_data_S11;
-
-	wire [9:0] w_addr_S21,r_addr_S21;
-	wire w_occur_S21,r_occur_S21;
-	wire w_ready_S21,r_valid_S21;
-	wire [31:0] w_data_S21,r_data_S21;
-
-	wire [15:0] A_ref,A_S11,A_S21;
-	wire [7:0] T_ref,T_S11,T_S21;
+	wire [15:0] A_ref;
+	wire [7:0] T_ref;
+	wire [1:0] switcher;
+	reg data_in;
 
 	wire [C_S_AXI_DATA_WIDTH-1 : 0] slv_wire0;
 	wire [C_S_AXI_DATA_WIDTH-1 : 0] slv_wire1;
@@ -224,16 +160,30 @@ module Auto_ETS#(
 
 
 	assign en_auto = slv_reg0[0];
-	assign triger = slv_reg0[16]?triger_imp:triger_squ;
-	assign T_ref = slv_reg1[15:0];
-	assign T_S11 = slv_reg2[15:0];
-	assign T_S21 = slv_reg3[15:0];
-	assign gth_data = slv_reg7;
+	assign switcher = slv_reg1[1:0];
+	assign T_ref = slv_reg2[15:0];
+	assign gth_data = slv_reg3;
 	wire ps_en;
     wire ps_incdec;
     wire ps_clk;
     wire ps_done;
 
+    always @ (shifting_clk) begin
+    	case(switcher)
+    		2'b00: begin
+    			data_in <= CMP_DATA_ref;
+    		end
+    		2'b01: begin
+    			data_in <= CMP_DATA_S11;
+    		end
+    		2'b10: begin
+    			data_in <= CMP_DATA_S21;
+    		end
+    		2'b11: begin
+    			data_in <= CMP_DATA_ref;
+    		end
+    	endcase
+    end
 
 
 	ETS_System inst_ETS_System(
@@ -245,7 +195,7 @@ module Auto_ETS#(
 			.ps_clk       (ps_clk),
 			.ps_done      (ps_done),
 			.en           (en_auto),
-			.CMP_DATA_ref (CMP_DATA_ref),
+			.CMP_DATA_ref (data_in),
 			.T_ref        (T_ref),
 			.A_ref        (A_ref),
 			.waddr_ref    (w_addr_ref),
@@ -254,27 +204,7 @@ module Auto_ETS#(
 			.w_occur_ref  (w_occur_ref),
 			.r_occur_ref  (r_occur_ref),
 			.w_ready_ref  (w_ready_ref),
-			.r_valid_ref  (r_valid_ref),
-			.CMP_DATA_S11 (CMP_DATA_S11),
-			.T_S11        (T_S11),
-			.A_S11        (A_S11),
-			.waddr_S11    (w_addr_S11),
-			.raddr_S11    (r_addr_S11),
-			.rdata_S11    (r_data_S11),
-			.w_occur_S11  (w_occur_S11),
-			.r_occur_S11  (r_occur_S11),
-			.w_ready_S11  (w_ready_S11),
-			.r_valid_S11  (r_valid_S11),
-			.CMP_DATA_S21 (CMP_DATA_S21),
-			.T_S21        (T_S21),
-			.A_S21        (A_S21),
-			.waddr_S21    (w_addr_S21),
-			.raddr_S21    (r_addr_S21),
-			.rdata_S21    (r_data_S21),
-			.w_occur_S21  (w_occur_S21),
-			.r_occur_S21  (r_occur_S21),
-			.w_ready_S21  (w_ready_S21),
-			.r_valid_S21  (r_valid_S21)
+			.r_valid_ref  (r_valid_ref)
 		);
 
 	AXI_Interface #(
@@ -313,78 +243,7 @@ module Auto_ETS#(
 			.w_ready       (w_ready_ref),
 			.r_valid       (r_valid_ref)
 		);
-	AXI_Interface #(
-			.ADDR_WIDTH(ADDR_WIDTH),
-			.DATA_WIDTH(DATA_WIDTH),
-			.S_AXI_ADDR_WIDTH(S_AXI_ADDR_WIDTH),
-			.S_AXI_DATA_WIDTH(S_AXI_DATA_WIDTH)
-		) inst_AXI_Interface_S21 (
-			.S_AXI_aclk    (S_AXI_DATA_S21_aclk),
-			.S_AXI_aresetn (S_AXI_DATA_S21_aresetn),
-			.S_AXI_araddr  (S_AXI_DATA_S21_araddr),
-			.S_AXI_arready (S_AXI_DATA_S21_arready),
-			.S_AXI_arvalid (S_AXI_DATA_S21_arvalid),
-			.S_AXI_arprot  (S_AXI_DATA_S21_arprot),
-			.S_AXI_awaddr  (S_AXI_DATA_S21_awaddr),
-			.S_AXI_awready (S_AXI_DATA_S21_awready),
-			.S_AXI_awvalid (S_AXI_DATA_S21_awvalid),
-			.S_AXI_awprot  (S_AXI_DATA_S21_awprot),
-			.S_AXI_bresp   (S_AXI_DATA_S21_bresp),
-			.S_AXI_bready  (S_AXI_DATA_S21_bready),
-			.S_AXI_bvalid  (S_AXI_DATA_S21_bvalid),
-			.S_AXI_rdata   (S_AXI_DATA_S21_rdata),
-			.S_AXI_rready  (S_AXI_DATA_S21_rready),
-			.S_AXI_rvalid  (S_AXI_DATA_S21_rvalid),
-			.S_AXI_rresp   (S_AXI_DATA_S21_rresp),
-			.S_AXI_wdata   (S_AXI_DATA_S21_wdata),
-			.S_AXI_wready  (S_AXI_DATA_S21_wready),
-			.S_AXI_wvalid  (S_AXI_DATA_S21_wvalid),
-			.S_AXI_wstrb   (S_AXI_DATA_S21_wstrb),
-			.w_addr        (w_addr_S21),
-			.r_addr        (r_addr_S21),
-			.w_data        (w_data_S21),
-			.r_data        (r_data_S21),
-			.w_occur       (w_occur_S21),
-			.r_occur       (r_occur_S21),
-			.w_ready       (w_ready_S21),
-			.r_valid       (r_valid_S21)
-		);
-		AXI_Interface #(
-			.ADDR_WIDTH(ADDR_WIDTH),
-			.DATA_WIDTH(DATA_WIDTH),
-			.S_AXI_ADDR_WIDTH(S_AXI_ADDR_WIDTH),
-			.S_AXI_DATA_WIDTH(S_AXI_DATA_WIDTH)
-		) inst_AXI_Interface_S11 (
-			.S_AXI_aclk    (S_AXI_DATA_S11_aclk),
-			.S_AXI_aresetn (S_AXI_DATA_S11_aresetn),
-			.S_AXI_araddr  (S_AXI_DATA_S11_araddr),
-			.S_AXI_arready (S_AXI_DATA_S11_arready),
-			.S_AXI_arvalid (S_AXI_DATA_S11_arvalid),
-			.S_AXI_arprot  (S_AXI_DATA_S11_arprot),
-			.S_AXI_awaddr  (S_AXI_DATA_S11_awaddr),
-			.S_AXI_awready (S_AXI_DATA_S11_awready),
-			.S_AXI_awvalid (S_AXI_DATA_S11_awvalid),
-			.S_AXI_awprot  (S_AXI_DATA_S11_awprot),
-			.S_AXI_bresp   (S_AXI_DATA_S11_bresp),
-			.S_AXI_bready  (S_AXI_DATA_S11_bready),
-			.S_AXI_bvalid  (S_AXI_DATA_S11_bvalid),
-			.S_AXI_rdata   (S_AXI_DATA_S11_rdata),
-			.S_AXI_rready  (S_AXI_DATA_S11_rready),
-			.S_AXI_rvalid  (S_AXI_DATA_S11_rvalid),
-			.S_AXI_rresp   (S_AXI_DATA_S11_rresp),
-			.S_AXI_wdata   (S_AXI_DATA_S11_wdata),
-			.S_AXI_wready  (S_AXI_DATA_S11_wready),
-			.S_AXI_wvalid  (S_AXI_DATA_S11_wvalid),
-			.S_AXI_wstrb   (S_AXI_DATA_S11_wstrb),
-			.w_addr        (w_addr_S11),
-			.r_addr        (r_addr_S11),
-			.w_data        (w_data_S11),
-			.r_data        (r_data_S11),
-			.w_occur       (w_occur_S11),
-			.r_occur       (r_occur_S11),
-			.w_ready       (w_ready_S11),
-			.r_valid       (r_valid_S11)
-		);
+
 	AXI_LITE_CODE_v1_0_S__AXIL #(
 			.C_S_AXI_DATA_WIDTH(C_S_AXI_DATA_WIDTH),
 			.C_S_AXI_ADDR_WIDTH(C_S_AXI_ADDR_WIDTH)
@@ -410,8 +269,8 @@ module Auto_ETS#(
 			.slv_wire2     (slv_reg2),
 			.slv_wire3     (slv_reg3),
 			.slv_wire4     ({16'd0,A_ref}),
-			.slv_wire5     ({16'd0,A_S11}),
-			.slv_wire6     ({16'd0,A_S21}),
+			.slv_wire5     (slv_reg5),
+			.slv_wire6     (slv_reg6),
 			.slv_wire7     (slv_reg7),
 			.slv_wire8     (slv_reg8),
 			.slv_wire9     (slv_reg9),
@@ -459,7 +318,7 @@ module Auto_ETS#(
 		// CLKIN_PERIOD: Input clock period in ns units, ps resolution (i.e. 33.333 is 30 MHz).
 		.CLKIN1_PERIOD(CLK_IN_PEO),
 		.CLKIN2_PERIOD(0.0),
-		.CLKOUT0_DIVIDE_F(FIXED_DIV),         // Divide amount for CLKOUT0 (1.000-128.000)
+		.CLKOUT0_DIVIDE_F(43.125),         // Divide amount for CLKOUT0 (1.000-128.000)
 		// CLKOUT0_DUTY_CYCLE - CLKOUT6_DUTY_CYCLE: Duty cycle for CLKOUT outputs (0.001-0.999).
 		.CLKOUT0_DUTY_CYCLE(0.5),
 		.CLKOUT1_DUTY_CYCLE(0.5),
@@ -471,7 +330,7 @@ module Auto_ETS#(
 		// CLKOUT0_PHASE - CLKOUT6_PHASE: Phase offset for CLKOUT outputs (-360.000-360.000).
 		.CLKOUT0_PHASE(0.0),
 		.CLKOUT1_PHASE(0.0),
-		.CLKOUT2_PHASE(IMP_PHASE),
+		.CLKOUT2_PHASE(0.0),
 		.CLKOUT3_PHASE(0.0),
 		.CLKOUT4_PHASE(0.0),
 		.CLKOUT5_PHASE(0.0),
@@ -479,11 +338,11 @@ module Auto_ETS#(
 		// CLKOUT1_DIVIDE - CLKOUT6_DIVIDE: Divide amount for CLKOUT (1-128)
 		.CLKOUT1_DIVIDE(FIXED_DIV),
 		.CLKOUT2_DIVIDE(FIXED_DIV),
-		.CLKOUT3_DIVIDE(SWING_DIV),
+		.CLKOUT3_DIVIDE(FIXED_DIV),
 		.CLKOUT4_CASCADE("FALSE"),
-		.CLKOUT4_DIVIDE(SWING_DIV),
-		.CLKOUT5_DIVIDE(SWING_DIV),
-		.CLKOUT6_DIVIDE(SWING_DIV),
+		.CLKOUT4_DIVIDE(FIXED_DIV),
+		.CLKOUT5_DIVIDE(FIXED_DIV),
+		.CLKOUT6_DIVIDE(FIXED_DIV),
 		.COMPENSATION("AUTO"),          // AUTO, BUF_IN, EXTERNAL, INTERNAL, ZHOLD
 		.DIVCLK_DIVIDE(VCO_DIV),              // Master division value (1-106)
 		// Programmable Inversion Attributes: Specifies built-in programmable inversion on specific pins
@@ -506,9 +365,9 @@ module Auto_ETS#(
 		// USE_FINE_PS: Fine phase shift enable (TRUE/FALSE)
 		.CLKFBOUT_USE_FINE_PS("FALSE"),
 		.CLKOUT0_USE_FINE_PS("FALSE"),
-		.CLKOUT1_USE_FINE_PS("TRUE"),
+		.CLKOUT1_USE_FINE_PS("FALSE"),
 		.CLKOUT2_USE_FINE_PS("FALSE"),
-		.CLKOUT3_USE_FINE_PS("FALSE"),
+		.CLKOUT3_USE_FINE_PS("TRUE"),
 		.CLKOUT4_USE_FINE_PS("FALSE"),
 		.CLKOUT5_USE_FINE_PS("FALSE"),
 		.CLKOUT6_USE_FINE_PS("FALSE") 
@@ -559,34 +418,24 @@ module Auto_ETS#(
 		.PSDONE(ps_done)             // 1-bit output: Phase shift done
 	);
 
-	BUFG BUFG_CLKOUT0_sysclk (
-		.O(system_clk), // 1-bit output: Clock output
+	BUFG BUFG_CLKOUT0_swing_clk (
+		.O(swing_clk), // 1-bit output: Clock output
 		.I(CLKOUT0)  // 1-bit input: Clock input
 	);
 
-	BUFG BUFG_CLKOUT1_shifting (
-		.O(shifting_clk), // 1-bit output: Clock output
+	BUFG BUFG_CLKOUT1_system (
+		.O(system_clk), // 1-bit output: Clock output
 		.I(CLKOUT1)  // 1-bit input: Clock input
 	);
 
-	BUFG BUFG_CLKOUT2_imp (
-		.O(imp), // 1-bit output: Clock output
+	BUFG BUFG_CLKOUT2_shifing (
+		.O(shifting_clk), // 1-bit output: Clock output
 		.I(CLKOUT2)  // 1-bit input: Clock input
 	);
 
-	BUFG BUFG_CLKOUT3_ref (
-		.O(ref_swing), // 1-bit output: Clock output
+	BUFG BUFG_CLKOUT3_imp (
+		.O(triger), // 1-bit output: Clock output
 		.I(CLKOUT3)  // 1-bit input: Clock input
-	);
-
-	BUFG BUFG_CLKOUT4_S11 (
-		.O(S11_swing), // 1-bit output: Clock output
-		.I(CLKOUT4)  // 1-bit input: Clock input
-	);
-
-	BUFG BUFG_CLKOUT5_S21 (
-		.O(S21_swing), // 1-bit output: Clock output
-		.I(CLKOUT5)  // 1-bit input: Clock input
 	);
 
 
@@ -594,6 +443,4 @@ module Auto_ETS#(
 		.O(CLKFB_IN), // 1-bit output: Clock output
 		.I(CLKFB_OUT)  // 1-bit input: Clock input
 	);
-	assign triger_imp = system_clk & (~imp);
-	assign triger_squ = system_clk;
 endmodule

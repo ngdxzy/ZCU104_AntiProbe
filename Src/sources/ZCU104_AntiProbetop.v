@@ -55,6 +55,7 @@ module ZCU104_AntiProbetop(
 	wire free_run_rst_n;
 
 	wire [31:0] GTH_DATA;
+	wire swing_clk;
 
 	wire CMP_DATA_ref;
 	wire CMP_DATA_S11;
@@ -103,6 +104,9 @@ module ZCU104_AntiProbetop(
 		.I(shifting_clk)      // Buffer input
 	);
 
+	assign S21_swing = swing_clk;
+	assign S11_swing = swing_clk;
+	assign ref_swing = swing_clk;
 
 	reg cmp_data_ref_r;
 	always @(posedge shifting_clk) begin
@@ -123,12 +127,10 @@ module ZCU104_AntiProbetop(
        	.CMP_DATA_S11(cmp_data_S11_r),
         .CMP_DATA_S21(cmp_data_S21_r),
         .CMP_DATA_ref(cmp_data_ref_r),
-        .S11_swing(S11_swing),
-        .S21_swing(S21_swing),
         .free_run_rst_n(free_run_rst_n),
         .ref_clk_fb(ref_clk_fb),
         .ref_clk_fb_good(ref_clk_fb_good),
-        .ref_swing(ref_swing),
+        .swing_clk(swing_clk),
         .reset(reset),
         .shifting_clk(shifting_clk),
         .system_clk_good(system_clk_good),

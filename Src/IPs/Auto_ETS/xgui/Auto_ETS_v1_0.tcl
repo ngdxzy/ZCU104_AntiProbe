@@ -80,6 +80,15 @@ proc validate_PARAM_VALUE.FIXED_DIV { PARAM_VALUE.FIXED_DIV } {
 	return true
 }
 
+proc update_PARAM_VALUE.IMP_DIV { PARAM_VALUE.IMP_DIV } {
+	# Procedure called to update IMP_DIV when any of the dependent parameters in the arguments change
+}
+
+proc validate_PARAM_VALUE.IMP_DIV { PARAM_VALUE.IMP_DIV } {
+	# Procedure called to validate IMP_DIV
+	return true
+}
+
 proc update_PARAM_VALUE.IMP_PHASE { PARAM_VALUE.IMP_PHASE } {
 	# Procedure called to update IMP_PHASE when any of the dependent parameters in the arguments change
 }
@@ -198,5 +207,10 @@ proc update_MODELPARAM_VALUE.SWING_DIV { MODELPARAM_VALUE.SWING_DIV PARAM_VALUE.
 proc update_MODELPARAM_VALUE.IMP_PHASE { MODELPARAM_VALUE.IMP_PHASE PARAM_VALUE.IMP_PHASE } {
 	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
 	set_property value [get_property value ${PARAM_VALUE.IMP_PHASE}] ${MODELPARAM_VALUE.IMP_PHASE}
+}
+
+proc update_MODELPARAM_VALUE.IMP_DIV { MODELPARAM_VALUE.IMP_DIV PARAM_VALUE.IMP_DIV } {
+	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
+	set_property value [get_property value ${PARAM_VALUE.IMP_DIV}] ${MODELPARAM_VALUE.IMP_DIV}
 }
 
