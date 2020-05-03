@@ -187,7 +187,7 @@ module Auto_ETS#(
 
 
 	ETS_System inst_ETS_System(
-			.shifting_clk (shifting_clk),
+			.shifting_clk (sample_clk),
 			.sys_clk      (S_AXI_ACLK),
 			.reset        (~S_AXI_ARESETN),
 			.ps_en        (ps_en),
@@ -310,6 +310,7 @@ module Auto_ETS#(
 	wire CLKOUT4;
 	wire CLKOUT5;
 	wire CLKFB_IN,CLKFB_OUT;
+	wire sample_clk;
 
 	MMCME3_ADV #(
 		.BANDWIDTH("OPTIMIZED"),        // Jitter programming (HIGH, LOW, OPTIMIZED)
@@ -318,7 +319,7 @@ module Auto_ETS#(
 		// CLKIN_PERIOD: Input clock period in ns units, ps resolution (i.e. 33.333 is 30 MHz).
 		.CLKIN1_PERIOD(CLK_IN_PEO),
 		.CLKIN2_PERIOD(0.0),
-		.CLKOUT0_DIVIDE_F(43.125),         // Divide amount for CLKOUT0 (1.000-128.000)
+		.CLKOUT0_DIVIDE_F(FIXED_DIV),         // Divide amount for CLKOUT0 (1.000-128.000)
 		// CLKOUT0_DUTY_CYCLE - CLKOUT6_DUTY_CYCLE: Duty cycle for CLKOUT outputs (0.001-0.999).
 		.CLKOUT0_DUTY_CYCLE(0.5),
 		.CLKOUT1_DUTY_CYCLE(0.5),
@@ -404,13 +405,13 @@ module Auto_ETS#(
 		// Feedback inputs: Clock feedback ports
 		.RST(free_run_rst),                   // 1-bit input: Reset
 		// DRP Ports inputs: Dynamic reconfiguration ports
-		.DO(drp_do),                     // 16-bit output: DRP data
-		.DRDY(drp_drdy),                 // 1-bit output: DRP ready
-		.DADDR(drp_daddr),               // 7-bit input: DRP address
+		.DO(),                     // 16-bit output: DRP data
+		.DRDY(),                 // 1-bit output: DRP ready
+		.DADDR(0),               // 7-bit input: DRP address
 		.DCLK(drp_dclk),                 // 1-bit input: DRP clock
-		.DEN(drp_den),                   // 1-bit input: DRP enable
-		.DI(drp_di),                     // 16-bit input: DRP data
-		.DWE(drp_dwe),                   // 1-bit input: DRP write enable
+		.DEN(0),                   // 1-bit input: DRP enable
+		.DI(0),                     // 16-bit input: DRP data
+		.DWE(0),                   // 1-bit input: DRP write enable
 		// Dynamic Phase Shift Ports inputs: Ports used for dynamic phase shifting of the outputs
 		.PSCLK(ps_clk),               // 1-bit input: Phase shift clock
 		.PSEN(ps_en),                 // 1-bit input: Phase shift enable
@@ -421,6 +422,7 @@ module Auto_ETS#(
 		.O(CLKFB_IN), // 1-bit output: Clock output
 		.I(CLKFB_OUT)  // 1-bit input: Clock input
 	);
+	wire CLKFB_IN1,CLKFB_OUT1;
 	MMCME3_ADV #(
 		.BANDWIDTH("OPTIMIZED"),        // Jitter programming (HIGH, LOW, OPTIMIZED)
 		.CLKFBOUT_MULT_F(VCO_MUL),          // Multiply value for all CLKOUT (2.000-64.000)
@@ -476,7 +478,7 @@ module Auto_ETS#(
 		.CLKFBOUT_USE_FINE_PS("FALSE"),
 		.CLKOUT0_USE_FINE_PS("FALSE"),
 		.CLKOUT1_USE_FINE_PS("FALSE"),
-		.CLKOUT2_USE_FINE_PS("TRUE"),
+		.CLKOUT2_USE_FINE_PS("FALSE"),
 		.CLKOUT3_USE_FINE_PS("FALSE"),
 		.CLKOUT4_USE_FINE_PS("FALSE"),
 		.CLKOUT5_USE_FINE_PS("FALSE"),
@@ -484,20 +486,20 @@ module Auto_ETS#(
 	)
 	MMCME3_ADV_inst1 (
 	// Clock Outputs outputs: User configurable clock outputs
-		.CLKOUT0(CLKOUT0),           // 1-bit output: CLKOUT0
+		.CLKOUT0(CLKOUT2),           // 1-bit output: CLKOUT0
 		.CLKOUT0B(),         // 1-bit output: Inverted CLKOUT0
-		.CLKOUT1(CLKOUT1),           // 1-bit output: Primary clock
+		.CLKOUT1(CLKOUT3),           // 1-bit output: Primary clock
 		.CLKOUT1B(),         // 1-bit output: Inverted CLKOUT1
-		.CLKOUT2(CLKOUT2),           // 1-bit output: CLKOUT2
+		.CLKOUT2(),           // 1-bit output: CLKOUT2
 		.CLKOUT2B(),         // 1-bit output: Inverted CLKOUT2
-		.CLKOUT3(CLKOUT3),           // 1-bit output: CLKOUT3
+		.CLKOUT3(),           // 1-bit output: CLKOUT3
 		.CLKOUT3B(),         // 1-bit output: Inverted CLKOUT3
-		.CLKOUT4(CLKOUT4),           // 1-bit output: CLKOUT4
-		.CLKOUT5(CLKOUT5),           // 1-bit output: CLKOUT5
+		.CLKOUT4(),           // 1-bit output: CLKOUT4
+		.CLKOUT5(),           // 1-bit output: CLKOUT5
 		.CLKOUT6(),           // 1-bit output: CLKOUT6
 		// Feedback outputs: Clock feedback ports
-		.CLKFBIN(CLKFB_IN),            // 1-bit input: Feedback clock
-		.CLKFBOUT(CLKFB_OUT),         // 1-bit output: Feedback clock
+		.CLKFBIN(CLKFB_IN1),            // 1-bit input: Feedback clock
+		.CLKFBOUT(CLKFB_OUT1),         // 1-bit output: Feedback clock
 		.CLKFBOUTB(),       // 1-bit output: Inverted CLKFBOUT
 		// Status Ports outputs: MMCM status ports
 		.CDDCDONE(),         // 1-bit output: Clock dynamic divide done
@@ -506,7 +508,7 @@ module Auto_ETS#(
 		.LOCKED(locked),             // 1-bit output: LOCK
 		.CDDCREQ(1'b0),           // 1-bit input: Request to dynamic divide clock
 		// Clock Inputs inputs: Clock inputs
-		.CLKIN1(free_run_clk),             // 1-bit input: Primary clock
+		.CLKIN1(shifting_clk),             // 1-bit input: Primary clock
 		.CLKIN2(),             // 1-bit input: Secondary clock
 		// Control Ports inputs: MMCM control ports
 		.CLKINSEL(CLK_SW),         // 1-bit input: Clock select, High=CLKIN1 Low=CLKIN2
@@ -523,29 +525,32 @@ module Auto_ETS#(
 		.DWE(drp_dwe),                   // 1-bit input: DRP write enable
 		// Dynamic Phase Shift Ports inputs: Ports used for dynamic phase shifting of the outputs
 		.PSCLK(ps_clk),               // 1-bit input: Phase shift clock
-		.PSEN(ps_en),                 // 1-bit input: Phase shift enable
-		.PSINCDEC(ps_incdec),         // 1-bit input: Phase shift increment/decrement
-		.PSDONE(ps_done)             // 1-bit output: Phase shift done
+		.PSEN(0),                 // 1-bit input: Phase shift enable
+		.PSINCDEC(0),         // 1-bit input: Phase shift increment/decrement
+		.PSDONE()             // 1-bit output: Phase shift done
 	);
 	BUFG BUFG_CLKOUT0_swing_clk (
-		.O(swing_clk), // 1-bit output: Clock output
+		.O(system_clk), // 1-bit output: Clock output
 		.I(CLKOUT0)  // 1-bit input: Clock input
 	);
 
 	BUFG BUFG_CLKOUT1_system (
-		.O(system_clk), // 1-bit output: Clock output
+		.O(shifting_clk), // 1-bit output: Clock output
 		.I(CLKOUT1)  // 1-bit input: Clock input
 	);
-
 	BUFG BUFG_CLKOUT2_shifing (
-		.O(shifting_clk), // 1-bit output: Clock output
+		.O(swing_clk), // 1-bit output: Clock output
 		.I(CLKOUT2)  // 1-bit input: Clock input
 	);
 
 	BUFG BUFG_CLKOUT3_imp (
-		.O(triger), // 1-bit output: Clock output
+		.O(sample_clk), // 1-bit output: Clock output
 		.I(CLKOUT3)  // 1-bit input: Clock input
 	);
 
+	BUFG BUFG_CLKFB1 (
+		.O(CLKFB_IN1), // 1-bit output: Clock output
+		.I(CLKFB_OUT1)  // 1-bit input: Clock input
+	);
 
 endmodule

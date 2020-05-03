@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<EDKSYSTEM EDWVERSION="1.2" TIMESTAMP="Sun Apr 26 21:18:52 2020" VIVADOVERSION="2019.1">
+<EDKSYSTEM EDWVERSION="1.2" TIMESTAMP="Sun May  3 14:36:15 2020" VIVADOVERSION="2019.1">
 
   <SYSTEMINFO ARCH="zynquplus" BOARD="xilinx.com:zcu104:part0:1.1" DEVICE="xczu7ev" NAME="ZCU104_MCU" PACKAGE="ffvc1156" SPEEDGRADE="-2"/>
 
@@ -71,7 +71,7 @@
   <EXTERNALINTERFACES/>
 
   <MODULES>
-    <MODULE COREREVISION="47" FULLNAME="/Auto_ETS_0" HWVERSION="1.0" INSTANCE="Auto_ETS_0" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="Auto_ETS" VLNV="user.org:user:Auto_ETS:1.0">
+    <MODULE COREREVISION="49" FULLNAME="/Auto_ETS_0" HWVERSION="1.0" INSTANCE="Auto_ETS_0" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="Auto_ETS" VLNV="user.org:user:Auto_ETS:1.0">
       <DOCUMENTS/>
       <ADDRESSBLOCKS>
         <ADDRESSBLOCK ACCESS="" INTERFACE="S_AXI_CTRL" NAME="reg0" RANGE="4096" USAGE="register"/>
@@ -1168,6 +1168,101 @@
             <CONNECTION INSTANCE="rst_REF_CLK_IN_156M" PORT="peripheral_aresetn"/>
           </CONNECTIONS>
         </PORT>
+        <PORT DIR="O" LEFT="39" NAME="M00_AXI_awaddr" RIGHT="0" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_AWADDR">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_AWADDR"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="O" LEFT="2" NAME="M00_AXI_awprot" RIGHT="0" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_AWPROT">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_AWPROT"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="O" NAME="M00_AXI_awvalid" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_AWVALID">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_AWVALID"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="I" NAME="M00_AXI_awready" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_AWREADY">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_AWREADY"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="O" LEFT="31" NAME="M00_AXI_wdata" RIGHT="0" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_WDATA">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_WDATA"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="O" LEFT="3" NAME="M00_AXI_wstrb" RIGHT="0" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_WSTRB">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_WSTRB"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="O" NAME="M00_AXI_wvalid" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_WVALID">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_WVALID"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="I" NAME="M00_AXI_wready" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_WREADY">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_WREADY"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="I" LEFT="1" NAME="M00_AXI_bresp" RIGHT="0" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_BRESP">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_BRESP"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="I" NAME="M00_AXI_bvalid" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_BVALID">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_BVALID"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="O" NAME="M00_AXI_bready" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_BREADY">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_BREADY"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="O" LEFT="39" NAME="M00_AXI_araddr" RIGHT="0" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_ARADDR">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_ARADDR"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="O" LEFT="2" NAME="M00_AXI_arprot" RIGHT="0" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_ARPROT">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_ARPROT"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="O" NAME="M00_AXI_arvalid" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_ARVALID">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_ARVALID"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="I" NAME="M00_AXI_arready" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_ARREADY">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_ARREADY"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="I" LEFT="31" NAME="M00_AXI_rdata" RIGHT="0" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_RDATA">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_RDATA"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="I" LEFT="1" NAME="M00_AXI_rresp" RIGHT="0" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_RRESP">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_RRESP"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="I" NAME="M00_AXI_rvalid" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_RVALID">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_RVALID"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="O" NAME="M00_AXI_rready" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_RREADY">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_RREADY"/>
+          </CONNECTIONS>
+        </PORT>
         <PORT DIR="I" LEFT="15" NAME="S00_AXI_awid" RIGHT="0" SIGIS="undef" SIGNAME="ps8_0_axi_periph_S00_AXI_awid">
           <CONNECTIONS>
             <CONNECTION INSTANCE="zynq_ultra_ps_e_0" PORT="maxigp0_awid"/>
@@ -1355,101 +1450,6 @@
             <CONNECTION INSTANCE="zynq_ultra_ps_e_0" PORT="maxigp0_rready"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" LEFT="39" NAME="M02_AXI_awaddr" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_awaddr">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_awaddr"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="O" LEFT="2" NAME="M02_AXI_awprot" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_awprot">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_awprot"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="O" LEFT="0" NAME="M02_AXI_awvalid" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_awvalid">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_awvalid"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="I" LEFT="0" NAME="M02_AXI_awready" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_awready">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_awready"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="O" LEFT="31" NAME="M02_AXI_wdata" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_wdata">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_wdata"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="O" LEFT="3" NAME="M02_AXI_wstrb" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_wstrb">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_wstrb"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="O" LEFT="0" NAME="M02_AXI_wvalid" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_wvalid">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_wvalid"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="I" LEFT="0" NAME="M02_AXI_wready" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_wready">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_wready"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="I" LEFT="1" NAME="M02_AXI_bresp" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_bresp">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_bresp"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="I" LEFT="0" NAME="M02_AXI_bvalid" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_bvalid">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_bvalid"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="O" LEFT="0" NAME="M02_AXI_bready" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_bready">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_bready"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="O" LEFT="39" NAME="M02_AXI_araddr" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_araddr">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_araddr"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="O" LEFT="2" NAME="M02_AXI_arprot" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_arprot">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_arprot"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="O" LEFT="0" NAME="M02_AXI_arvalid" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_arvalid">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_arvalid"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="I" LEFT="0" NAME="M02_AXI_arready" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_arready">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_arready"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="I" LEFT="31" NAME="M02_AXI_rdata" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_rdata">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_rdata"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="I" LEFT="1" NAME="M02_AXI_rresp" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_rresp">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_rresp"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="I" LEFT="0" NAME="M02_AXI_rvalid" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_rvalid">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_rvalid"/>
-          </CONNECTIONS>
-        </PORT>
-        <PORT DIR="O" LEFT="0" NAME="M02_AXI_rready" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_rready">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_rready"/>
-          </CONNECTIONS>
-        </PORT>
         <PORT DIR="O" LEFT="39" NAME="M01_AXI_awaddr" RIGHT="0" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_DATA_REF_awaddr">
           <CONNECTIONS>
             <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_DATA_REF_awaddr"/>
@@ -1545,99 +1545,99 @@
             <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_DATA_REF_rready"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" LEFT="39" NAME="M00_AXI_awaddr" RIGHT="0" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_AWADDR">
+        <PORT DIR="O" LEFT="39" NAME="M02_AXI_awaddr" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_awaddr">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_AWADDR"/>
+            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_awaddr"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" LEFT="2" NAME="M00_AXI_awprot" RIGHT="0" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_AWPROT">
+        <PORT DIR="O" LEFT="2" NAME="M02_AXI_awprot" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_awprot">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_AWPROT"/>
+            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_awprot"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" NAME="M00_AXI_awvalid" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_AWVALID">
+        <PORT DIR="O" LEFT="0" NAME="M02_AXI_awvalid" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_awvalid">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_AWVALID"/>
+            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_awvalid"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" NAME="M00_AXI_awready" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_AWREADY">
+        <PORT DIR="I" LEFT="0" NAME="M02_AXI_awready" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_awready">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_AWREADY"/>
+            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_awready"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" LEFT="31" NAME="M00_AXI_wdata" RIGHT="0" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_WDATA">
+        <PORT DIR="O" LEFT="31" NAME="M02_AXI_wdata" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_wdata">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_WDATA"/>
+            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_wdata"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" LEFT="3" NAME="M00_AXI_wstrb" RIGHT="0" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_WSTRB">
+        <PORT DIR="O" LEFT="3" NAME="M02_AXI_wstrb" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_wstrb">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_WSTRB"/>
+            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_wstrb"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" NAME="M00_AXI_wvalid" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_WVALID">
+        <PORT DIR="O" LEFT="0" NAME="M02_AXI_wvalid" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_wvalid">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_WVALID"/>
+            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_wvalid"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" NAME="M00_AXI_wready" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_WREADY">
+        <PORT DIR="I" LEFT="0" NAME="M02_AXI_wready" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_wready">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_WREADY"/>
+            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_wready"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" LEFT="1" NAME="M00_AXI_bresp" RIGHT="0" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_BRESP">
+        <PORT DIR="I" LEFT="1" NAME="M02_AXI_bresp" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_bresp">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_BRESP"/>
+            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_bresp"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" NAME="M00_AXI_bvalid" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_BVALID">
+        <PORT DIR="I" LEFT="0" NAME="M02_AXI_bvalid" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_bvalid">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_BVALID"/>
+            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_bvalid"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" NAME="M00_AXI_bready" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_BREADY">
+        <PORT DIR="O" LEFT="0" NAME="M02_AXI_bready" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_bready">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_BREADY"/>
+            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_bready"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" LEFT="39" NAME="M00_AXI_araddr" RIGHT="0" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_ARADDR">
+        <PORT DIR="O" LEFT="39" NAME="M02_AXI_araddr" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_araddr">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_ARADDR"/>
+            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_araddr"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" LEFT="2" NAME="M00_AXI_arprot" RIGHT="0" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_ARPROT">
+        <PORT DIR="O" LEFT="2" NAME="M02_AXI_arprot" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_arprot">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_ARPROT"/>
+            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_arprot"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" NAME="M00_AXI_arvalid" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_ARVALID">
+        <PORT DIR="O" LEFT="0" NAME="M02_AXI_arvalid" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_arvalid">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_ARVALID"/>
+            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_arvalid"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" NAME="M00_AXI_arready" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_ARREADY">
+        <PORT DIR="I" LEFT="0" NAME="M02_AXI_arready" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_arready">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_ARREADY"/>
+            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_arready"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" LEFT="31" NAME="M00_AXI_rdata" RIGHT="0" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_RDATA">
+        <PORT DIR="I" LEFT="31" NAME="M02_AXI_rdata" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_rdata">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_RDATA"/>
+            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_rdata"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" LEFT="1" NAME="M00_AXI_rresp" RIGHT="0" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_RRESP">
+        <PORT DIR="I" LEFT="1" NAME="M02_AXI_rresp" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_rresp">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_RRESP"/>
+            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_rresp"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" NAME="M00_AXI_rvalid" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_RVALID">
+        <PORT DIR="I" LEFT="0" NAME="M02_AXI_rvalid" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_rvalid">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_RVALID"/>
+            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_rvalid"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" NAME="M00_AXI_rready" SIGIS="undef" SIGNAME="Auto_ETS_0_S_AXI_RREADY">
+        <PORT DIR="O" LEFT="0" NAME="M02_AXI_rready" RIGHT="0" SIGIS="undef" SIGNAME="drp_bridge_0_S_AXI_rready">
           <CONNECTIONS>
-            <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_RREADY"/>
+            <CONNECTION INSTANCE="drp_bridge_0" PORT="S_AXI_rready"/>
           </CONNECTIONS>
         </PORT>
       </PORTS>
