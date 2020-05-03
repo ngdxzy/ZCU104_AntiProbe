@@ -74,8 +74,8 @@ gtwizard_ultrascale_0 your_instance_name (
   .gtwiz_reset_rx_cdr_stable_out(gtwiz_reset_rx_cdr_stable_out),            // output wire [0 : 0] gtwiz_reset_rx_cdr_stable_out
   .gtwiz_reset_tx_done_out(gtwiz_reset_tx_done_out),                        // output wire [0 : 0] gtwiz_reset_tx_done_out
   .gtwiz_reset_rx_done_out(gtwiz_reset_rx_done_out),                        // output wire [0 : 0] gtwiz_reset_rx_done_out
-  .gtwiz_userdata_tx_in(gtwiz_userdata_tx_in),                              // input wire [31 : 0] gtwiz_userdata_tx_in
-  .gtwiz_userdata_rx_out(gtwiz_userdata_rx_out),                            // output wire [31 : 0] gtwiz_userdata_rx_out
+  .gtwiz_userdata_tx_in(gtwiz_userdata_tx_in),                              // input wire [63 : 0] gtwiz_userdata_tx_in
+  .gtwiz_userdata_rx_out(gtwiz_userdata_rx_out),                            // output wire [63 : 0] gtwiz_userdata_rx_out
   .gtrefclk01_in(gtrefclk01_in),                                            // input wire [0 : 0] gtrefclk01_in
   .qpll1outclk_out(qpll1outclk_out),                                        // output wire [0 : 0] qpll1outclk_out
   .qpll1outrefclk_out(qpll1outrefclk_out),                                  // output wire [0 : 0] qpll1outrefclk_out

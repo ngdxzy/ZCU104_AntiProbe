@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<EDKSYSTEM EDWVERSION="1.2" TIMESTAMP="Mon Mar 16 19:37:29 2020" VIVADOVERSION="2019.1">
+<EDKSYSTEM EDWVERSION="1.2" TIMESTAMP="Sun Apr 26 21:18:52 2020" VIVADOVERSION="2019.1">
 
   <SYSTEMINFO ARCH="zynquplus" BOARD="xilinx.com:zcu104:part0:1.1" DEVICE="xczu7ev" NAME="ZCU104_MCU" PACKAGE="ffvc1156" SPEEDGRADE="-2"/>
 
@@ -50,11 +50,7 @@
         <CONNECTION INSTANCE="Auto_ETS_0" PORT="shifting_clk"/>
       </CONNECTIONS>
     </PORT>
-    <PORT DIR="O" NAME="triger" SIGIS="undef" SIGNAME="Auto_ETS_0_triger">
-      <CONNECTIONS>
-        <CONNECTION INSTANCE="Auto_ETS_0" PORT="triger"/>
-      </CONNECTIONS>
-    </PORT>
+    <PORT DIR="O" NAME="triger" SIGIS="undef"/>
     <PORT DIR="O" LEFT="31" NAME="gth_data" RIGHT="0" SIGIS="undef" SIGNAME="Auto_ETS_0_gth_data">
       <CONNECTIONS>
         <CONNECTION INSTANCE="Auto_ETS_0" PORT="gth_data"/>
@@ -75,7 +71,7 @@
   <EXTERNALINTERFACES/>
 
   <MODULES>
-    <MODULE COREREVISION="46" FULLNAME="/Auto_ETS_0" HWVERSION="1.0" INSTANCE="Auto_ETS_0" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="Auto_ETS" VLNV="user.org:user:Auto_ETS:1.0">
+    <MODULE COREREVISION="47" FULLNAME="/Auto_ETS_0" HWVERSION="1.0" INSTANCE="Auto_ETS_0" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="Auto_ETS" VLNV="user.org:user:Auto_ETS:1.0">
       <DOCUMENTS/>
       <ADDRESSBLOCKS>
         <ADDRESSBLOCK ACCESS="" INTERFACE="S_AXI_CTRL" NAME="reg0" RANGE="4096" USAGE="register"/>
@@ -129,11 +125,7 @@
             <CONNECTION INSTANCE="Auto_ETS_0" PORT="S_AXI_ACLK"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="O" NAME="triger" SIGIS="undef" SIGNAME="Auto_ETS_0_triger">
-          <CONNECTIONS>
-            <CONNECTION INSTANCE="External_Ports" PORT="triger"/>
-          </CONNECTIONS>
-        </PORT>
+        <PORT DIR="O" NAME="triger" SIGIS="undef"/>
         <PORT CLKFREQUENCY="100000000" DIR="O" NAME="swing_clk" SIGIS="clk" SIGNAME="Auto_ETS_0_swing_clk">
           <CONNECTIONS>
             <CONNECTION INSTANCE="External_Ports" PORT="swing_clk"/>

@@ -142,11 +142,11 @@ module ZCU104_AntiProbetop(
 		.gtwiz_userclk_tx_reset_in(~free_run_rst_n),                    // input wire [0 : 0] gtwiz_userclk_tx_reset_in
 		.gtwiz_userclk_tx_srcclk_out(),                // output wire [0 : 0] gtwiz_userclk_tx_srcclk_out
 		.gtwiz_userclk_tx_usrclk_out(),                // output wire [0 : 0] gtwiz_userclk_tx_usrclk_out
-		.gtwiz_userclk_tx_usrclk2_out(),              // output wire [0 : 0] gtwiz_userclk_tx_usrclk2_out
+		.gtwiz_userclk_tx_usrclk2_out(ref_clk_fb),              // output wire [0 : 0] gtwiz_userclk_tx_usrclk2_out
 		.gtwiz_userclk_tx_active_out(),                // output wire [0 : 0] gtwiz_userclk_tx_active_out
 		.gtwiz_userclk_rx_reset_in(~free_run_rst_n),                    // input wire [0 : 0] gtwiz_userclk_rx_reset_in
 		.gtwiz_userclk_rx_srcclk_out(),                // output wire [0 : 0] gtwiz_userclk_rx_srcclk_out
-		.gtwiz_userclk_rx_usrclk_out(ref_clk_fb),                // output wire [0 : 0] gtwiz_userclk_rx_usrclk_out
+		.gtwiz_userclk_rx_usrclk_out(),                // output wire [0 : 0] gtwiz_userclk_rx_usrclk_out
 		.gtwiz_userclk_rx_usrclk2_out(),              // output wire [0 : 0] gtwiz_userclk_rx_usrclk2_out
 		.gtwiz_userclk_rx_active_out(),                // output wire [0 : 0] gtwiz_userclk_rx_active_out
 		.gtwiz_reset_clk_freerun_in(free_run_clk),                  // input wire [0 : 0] gtwiz_reset_clk_freerun_in
@@ -158,7 +158,7 @@ module ZCU104_AntiProbetop(
 		.gtwiz_reset_rx_cdr_stable_out(),            // output wire [0 : 0] gtwiz_reset_rx_cdr_stable_out
 		.gtwiz_reset_tx_done_out(),                        // output wire [0 : 0] gtwiz_reset_tx_done_out
 		.gtwiz_reset_rx_done_out(),                        // output wire [0 : 0] gtwiz_reset_rx_done_out
-		.gtwiz_userdata_tx_in(GTH_DATA),                              // input wire [31 : 0] gtwiz_userdata_tx_in
+		.gtwiz_userdata_tx_in({32'd0,GTH_DATA}),                              // input wire [31 : 0] gtwiz_userdata_tx_in
 		.gtwiz_userdata_rx_out(),                            // output wire [31 : 0] gtwiz_userdata_rx_out
 		.gtrefclk01_in(gtrefclk00_in),                                            // input wire [0 : 0] gtrefclk00_in
 		.qpll1outclk_out(),                                        // output wire [0 : 0] qpll1outclk_out
