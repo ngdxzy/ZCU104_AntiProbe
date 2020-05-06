@@ -48,34 +48,6 @@ module Auto_ETS#(
 
 	output [31:0] gth_data,
 
- 	input                             S_AXI_DATA_REF_aclk,
-    input                             S_AXI_DATA_REF_aresetn,
-
-    input  [S_AXI_ADDR_WIDTH-1:0]     S_AXI_DATA_REF_araddr,
-    output 	                          S_AXI_DATA_REF_arready,
-    input                             S_AXI_DATA_REF_arvalid,
-    input  [2:0]                      S_AXI_DATA_REF_arprot,
-
-    input [S_AXI_ADDR_WIDTH-1:0]      S_AXI_DATA_REF_awaddr,
-    output 	                          S_AXI_DATA_REF_awready,
-    input                             S_AXI_DATA_REF_awvalid,
-    input  [2:0]                      S_AXI_DATA_REF_awprot,
-
-    output  [1:0]                     S_AXI_DATA_REF_bresp,  
-    input                             S_AXI_DATA_REF_bready,
-    output 	                          S_AXI_DATA_REF_bvalid,
-
-    output 	   [S_AXI_DATA_WIDTH-1:0] S_AXI_DATA_REF_rdata,
-    input                             S_AXI_DATA_REF_rready,
-    output 	                          S_AXI_DATA_REF_rvalid,
-    output  [1:0]                     S_AXI_DATA_REF_rresp,
-
-    input  [S_AXI_DATA_WIDTH-1:0]     S_AXI_DATA_REF_wdata,
-    output                            S_AXI_DATA_REF_wready,
-    input                             S_AXI_DATA_REF_wvalid,
-    input  [S_AXI_DATA_WIDTH/8-1:0]   S_AXI_DATA_REF_wstrb,
-
-
 	input CMP_DATA_ref,
 	input CMP_DATA_S11,
 	input CMP_DATA_S21,
@@ -207,43 +179,7 @@ module Auto_ETS#(
 			.r_valid_ref  (r_valid_ref)
 		);
 
-	AXI_Interface #(
-			.ADDR_WIDTH(ADDR_WIDTH),
-			.DATA_WIDTH(DATA_WIDTH),
-			.S_AXI_ADDR_WIDTH(S_AXI_ADDR_WIDTH),
-			.S_AXI_DATA_WIDTH(S_AXI_DATA_WIDTH)
-		) inst_AXI_Interface_ref (
-			.S_AXI_aclk    (S_AXI_DATA_REF_aclk),
-			.S_AXI_aresetn (S_AXI_DATA_REF_aresetn),
-			.S_AXI_araddr  (S_AXI_DATA_REF_araddr),
-			.S_AXI_arready (S_AXI_DATA_REF_arready),
-			.S_AXI_arvalid (S_AXI_DATA_REF_arvalid),
-			.S_AXI_arprot  (S_AXI_DATA_REF_arprot),
-			.S_AXI_awaddr  (S_AXI_DATA_REF_awaddr),
-			.S_AXI_awready (S_AXI_DATA_REF_awready),
-			.S_AXI_awvalid (S_AXI_DATA_REF_awvalid),
-			.S_AXI_awprot  (S_AXI_DATA_REF_awprot),
-			.S_AXI_bresp   (S_AXI_DATA_REF_bresp),
-			.S_AXI_bready  (S_AXI_DATA_REF_bready),
-			.S_AXI_bvalid  (S_AXI_DATA_REF_bvalid),
-			.S_AXI_rdata   (S_AXI_DATA_REF_rdata),
-			.S_AXI_rready  (S_AXI_DATA_REF_rready),
-			.S_AXI_rvalid  (S_AXI_DATA_REF_rvalid),
-			.S_AXI_rresp   (S_AXI_DATA_REF_rresp),
-			.S_AXI_wdata   (S_AXI_DATA_REF_wdata),
-			.S_AXI_wready  (S_AXI_DATA_REF_wready),
-			.S_AXI_wvalid  (S_AXI_DATA_REF_wvalid),
-			.S_AXI_wstrb   (S_AXI_DATA_REF_wstrb),
-			.w_addr        (w_addr_ref),
-			.r_addr        (r_addr_ref),
-			.w_data        (w_data_ref),
-			.r_data        (r_data_ref),
-			.w_occur       (w_occur_ref),
-			.r_occur       (r_occur_ref),
-			.w_ready       (w_ready_ref),
-			.r_valid       (r_valid_ref)
-		);
-
+	
 	AXI_LITE_CODE_v1_0_S__AXIL #(
 			.C_S_AXI_DATA_WIDTH(C_S_AXI_DATA_WIDTH),
 			.C_S_AXI_ADDR_WIDTH(C_S_AXI_ADDR_WIDTH)

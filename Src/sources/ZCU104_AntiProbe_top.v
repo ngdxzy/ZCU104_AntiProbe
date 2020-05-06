@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module ZCU104_AntiProbetop(
+module ZCU104_AntiProbe_top(
 	input ref_clk_in_p,
 	input ref_clk_in_n,
 	input reset,
@@ -54,8 +54,9 @@ module ZCU104_AntiProbetop(
 	wire free_run_clk;
 	wire free_run_rst_n;
 
-	wire [31:0] GTH_DATA;
+	wire [79:0] GTH_DATA;
 	wire swing_clk;
+	wire sample_clk;
 
 	wire CMP_DATA_ref;
 	wire CMP_DATA_S11;
@@ -85,7 +86,7 @@ module ZCU104_AntiProbetop(
 	) OBUFDS_ref (
 		.O(LE_ref_p),     // Diff_p output (connect directly to top-level port)
 		.OB(LE_ref_n),   // Diff_n output (connect directly to top-level port)
-		.I(shifting_clk)      // Buffer input
+		.I(sample_clk)      // Buffer input
 	);
 	OBUFDS #(
 		.IOSTANDARD("DEFAULT"), // Specify the output I/O standard
@@ -93,7 +94,7 @@ module ZCU104_AntiProbetop(
 	) OBUFDS_S11 (
 		.O(LE_S11_p),     // Diff_p output (connect directly to top-level port)
 		.OB(LE_S11_n),   // Diff_n output (connect directly to top-level port)
-		.I(shifting_clk)      // Buffer input
+		.I(sample_clk)      // Buffer input
 	);
 	OBUFDS #(
 		.IOSTANDARD("DEFAULT"), // Specify the output I/O standard
@@ -101,7 +102,7 @@ module ZCU104_AntiProbetop(
 	) OBUFDS_S21 (
 		.O(LE_S21_p),     // Diff_p output (connect directly to top-level port)
 		.OB(LE_S21_n),   // Diff_n output (connect directly to top-level port)
-		.I(shifting_clk)      // Buffer input
+		.I(sample_clk)      // Buffer input
 	);
 
 	assign S21_swing = swing_clk;
@@ -109,44 +110,42 @@ module ZCU104_AntiProbetop(
 	assign ref_swing = swing_clk;
 
 	reg cmp_data_ref_r;
-	always @(posedge shifting_clk) begin
+	always @(posedge sample_clk) begin
 		cmp_data_ref_r <= CMP_DATA_ref;
 	end
 	reg cmp_data_S11_r;
-	always @(posedge shifting_clk) begin
+	always @(posedge sample_clk) begin
 		cmp_data_S11_r <= CMP_DATA_S11;
 	end
 	reg cmp_data_S21_r;
-	always @(posedge shifting_clk) begin
+	always @(posedge sample_clk) begin
 		cmp_data_S21_r <= CMP_DATA_S21;
 	end
 
-	ZCU104_MCU ZCU104_MCU_i(
-		.free_run_clk(free_run_clk),
-		.gth_data(GTH_DATA),
-       	.CMP_DATA_S11(cmp_data_S11_r),
-        .CMP_DATA_S21(cmp_data_S21_r),
-        .CMP_DATA_ref(cmp_data_ref_r),
-        .free_run_rst_n(free_run_rst_n),
-        .ref_clk_fb(ref_clk_fb),
-        .ref_clk_fb_good(ref_clk_fb_good),
-        .swing_clk(swing_clk),
-        .reset(reset),
-        .shifting_clk(shifting_clk),
-        .system_clk_good(system_clk_good),
-        .triger(triger)
-    );
+	ZCU104_AntiProbetop inst_ZCU104_AntiProbetop_wrapper(
+		.GTH_DATA        (GTH_DATA),
+		.cmp_data        (cmp_data),
+		.free_run_clk    (free_run_clk),
+		.free_run_rst_n  (free_run_rst_n),
+		.ref_clk         (ref_clk_fb),
+		.ref_clk_good    (ref_clk_fb_good),
+		.reset           (reset),
+		.sample_clk      (sample_clk),
+		.sample_clk_good (system_clk_good),
+		.swing_clk       (swing_clk)
+	);
+
 	
 
 	gtwizard_ultrascale_0 GTH_inst (
 		.gtwiz_userclk_tx_reset_in(~free_run_rst_n),                    // input wire [0 : 0] gtwiz_userclk_tx_reset_in
 		.gtwiz_userclk_tx_srcclk_out(),                // output wire [0 : 0] gtwiz_userclk_tx_srcclk_out
 		.gtwiz_userclk_tx_usrclk_out(),                // output wire [0 : 0] gtwiz_userclk_tx_usrclk_out
-		.gtwiz_userclk_tx_usrclk2_out(),              // output wire [0 : 0] gtwiz_userclk_tx_usrclk2_out
+		.gtwiz_userclk_tx_usrclk2_out(ref_clk_fb),              // output wire [0 : 0] gtwiz_userclk_tx_usrclk2_out
 		.gtwiz_userclk_tx_active_out(),                // output wire [0 : 0] gtwiz_userclk_tx_active_out
 		.gtwiz_userclk_rx_reset_in(~free_run_rst_n),                    // input wire [0 : 0] gtwiz_userclk_rx_reset_in
 		.gtwiz_userclk_rx_srcclk_out(),                // output wire [0 : 0] gtwiz_userclk_rx_srcclk_out
-		.gtwiz_userclk_rx_usrclk_out(ref_clk_fb),                // output wire [0 : 0] gtwiz_userclk_rx_usrclk_out
+		.gtwiz_userclk_rx_usrclk_out(),                // output wire [0 : 0] gtwiz_userclk_rx_usrclk_out
 		.gtwiz_userclk_rx_usrclk2_out(),              // output wire [0 : 0] gtwiz_userclk_rx_usrclk2_out
 		.gtwiz_userclk_rx_active_out(),                // output wire [0 : 0] gtwiz_userclk_rx_active_out
 		.gtwiz_reset_clk_freerun_in(free_run_clk),                  // input wire [0 : 0] gtwiz_reset_clk_freerun_in
