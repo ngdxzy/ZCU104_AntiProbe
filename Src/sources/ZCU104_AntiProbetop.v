@@ -158,7 +158,7 @@ module ZCU104_AntiProbetop(
 		.gtwiz_reset_rx_cdr_stable_out(),            // output wire [0 : 0] gtwiz_reset_rx_cdr_stable_out
 		.gtwiz_reset_tx_done_out(),                        // output wire [0 : 0] gtwiz_reset_tx_done_out
 		.gtwiz_reset_rx_done_out(),                        // output wire [0 : 0] gtwiz_reset_rx_done_out
-		.gtwiz_userdata_tx_in({32'd0,GTH_DATA}),                              // input wire [31 : 0] gtwiz_userdata_tx_in
+		.gtwiz_userdata_tx_in({48'd0,GTH_DATA}),                              // input wire [31 : 0] gtwiz_userdata_tx_in
 		.gtwiz_userdata_rx_out(),                            // output wire [31 : 0] gtwiz_userdata_rx_out
 		.gtrefclk01_in(gtrefclk00_in),                                            // input wire [0 : 0] gtrefclk00_in
 		.qpll1outclk_out(),                                        // output wire [0 : 0] qpll1outclk_out

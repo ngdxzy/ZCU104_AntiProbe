@@ -73,8 +73,8 @@ COMPONENT gtwizard_ultrascale_0
     gtwiz_reset_rx_cdr_stable_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
     gtwiz_reset_tx_done_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
     gtwiz_reset_rx_done_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
-    gtwiz_userdata_tx_in : IN STD_LOGIC_VECTOR(63 DOWNTO 0);
-    gtwiz_userdata_rx_out : OUT STD_LOGIC_VECTOR(63 DOWNTO 0);
+    gtwiz_userdata_tx_in : IN STD_LOGIC_VECTOR(79 DOWNTO 0);
+    gtwiz_userdata_rx_out : OUT STD_LOGIC_VECTOR(79 DOWNTO 0);
     gtrefclk01_in : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
     qpll1outclk_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
     qpll1outrefclk_out : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);

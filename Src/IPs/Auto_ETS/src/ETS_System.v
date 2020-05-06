@@ -33,8 +33,8 @@ module ETS_System(
     input CMP_DATA_ref,
     input [7:0] T_ref,
     output [15:0] A_ref,
-	input [9:0] waddr_ref,
-	input [9:0] raddr_ref,
+	input [11:0] waddr_ref,
+	input [11:0] raddr_ref,
 	output [31:0] rdata_ref,
 	input w_occur_ref,
 	input r_occur_ref,
@@ -43,14 +43,14 @@ module ETS_System(
 	);
 
 
-	localparam MAX_ADDR = 10'd616;
+	localparam MAX_ADDR = 12'd2240;
 	wire [2:0] w_buffer_id_ref,r_buffer_id_ref;
 	wire valid_ref;
 
 	wire [31:0] data_ref;
 
 	reg ready;
-	reg [9:0]w_addr;
+	reg [11:0]w_addr;
 	reg clr;
 	reg en_c;
 	reg wea;

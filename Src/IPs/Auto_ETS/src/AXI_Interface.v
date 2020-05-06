@@ -23,7 +23,7 @@
 `timescale 1ns/1ns
 
 module AXI_Interface #(
-    parameter ADDR_WIDTH       = 10,                
+    parameter ADDR_WIDTH       = 14,                
     parameter DATA_WIDTH       = 16,
     parameter S_AXI_ADDR_WIDTH     = 32,               
     parameter S_AXI_DATA_WIDTH     = 32

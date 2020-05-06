@@ -21,12 +21,12 @@
 
 
 module TripleBuffer#(
-	parameter integer MAX_TAP = 10'd616
+	parameter integer MAX_TAP = 12'd616
 	)(
 	input w_clk,
 	input r_clk,
-	input [9:0] waddr,
-	input [9:0] raddr,
+	input [11:0] waddr,
+	input [11:0] raddr,
 	input [31:0] wdata,
 	output reg [31:0] rdata,
 	input [2:0]w_buffer_id,

@@ -22,19 +22,13 @@
 
 module Auto_ETS#(
 	parameter CLK_SW = 1,
-	parameter CLK_IN_PEO = 6.4,
-	parameter integer VCO_MUL = 10,
-	parameter integer VCO_DIV = 1,
-	parameter FIXED_DIV = 11,
-	parameter SWING_DIV = 40,
-
-	parameter IMP_DIV = 11.125,
+	parameter CLK_IN_PEO = 10,
 
 	parameter integer C_S_AXI_DATA_WIDTH	= 32,
 	parameter integer C_S_AXI_ADDR_WIDTH	= 6,
-	parameter ADDR_WIDTH       = 10,                
+	parameter ADDR_WIDTH       = 12,                
 	parameter DATA_WIDTH       = 32,
-	parameter S_AXI_ADDR_WIDTH     = 12,               
+	parameter S_AXI_ADDR_WIDTH     = 14,               
 	parameter S_AXI_DATA_WIDTH     = 32,
 	parameter IMP_PHASE = 0.091
 	)(
@@ -116,16 +110,21 @@ module Auto_ETS#(
 	wire triger_imp;
 	wire triger_squ;
 
-	wire [9:0] w_addr_ref,r_addr_ref;
+	wire [11:0] w_addr_ref,r_addr_ref;
 	wire w_occur_ref,r_occur_ref;
 	wire w_ready_ref,r_valid_ref;
 	wire [31:0] w_data_ref,r_data_ref;
+
+	reg [2:0] state, nextstate;
+	reg ps_en1,ps_en2;
+	wire ps_done1,ps_done2;
+	reg ps_done;
 
 	wire [15:0] A_ref;
 	wire [7:0] T_ref;
 	wire [1:0] switcher;
 	reg data_in;
-
+	assign triger = sample_clk;
 	wire [C_S_AXI_DATA_WIDTH-1 : 0] slv_wire0;
 	wire [C_S_AXI_DATA_WIDTH-1 : 0] slv_wire1;
 	wire [C_S_AXI_DATA_WIDTH-1 : 0] slv_wire2;
@@ -166,7 +165,6 @@ module Auto_ETS#(
 	wire ps_en;
     wire ps_incdec;
     wire ps_clk;
-    wire ps_done;
 
     always @ (shifting_clk) begin
     	case(switcher)
@@ -314,12 +312,12 @@ module Auto_ETS#(
 
 	MMCME3_ADV #(
 		.BANDWIDTH("OPTIMIZED"),        // Jitter programming (HIGH, LOW, OPTIMIZED)
-		.CLKFBOUT_MULT_F(VCO_MUL),          // Multiply value for all CLKOUT (2.000-64.000)
+		.CLKFBOUT_MULT_F(8),          // Multiply value for all CLKOUT (2.000-64.000)
 		.CLKFBOUT_PHASE(0.0),           // Phase offset in degrees of CLKFB (-360.000-360.000)
 		// CLKIN_PERIOD: Input clock period in ns units, ps resolution (i.e. 33.333 is 30 MHz).
 		.CLKIN1_PERIOD(CLK_IN_PEO),
 		.CLKIN2_PERIOD(0.0),
-		.CLKOUT0_DIVIDE_F(FIXED_DIV),         // Divide amount for CLKOUT0 (1.000-128.000)
+		.CLKOUT0_DIVIDE_F(8.000),         // Divide amount for CLKOUT0 (1.000-128.000)
 		// CLKOUT0_DUTY_CYCLE - CLKOUT6_DUTY_CYCLE: Duty cycle for CLKOUT outputs (0.001-0.999).
 		.CLKOUT0_DUTY_CYCLE(0.5),
 		.CLKOUT1_DUTY_CYCLE(0.5),
@@ -337,15 +335,15 @@ module Auto_ETS#(
 		.CLKOUT5_PHASE(0.0),
 		.CLKOUT6_PHASE(0.0),
 		// CLKOUT1_DIVIDE - CLKOUT6_DIVIDE: Divide amount for CLKOUT (1-128)
-		.CLKOUT1_DIVIDE(FIXED_DIV),
-		.CLKOUT2_DIVIDE(FIXED_DIV),
-		.CLKOUT3_DIVIDE(FIXED_DIV),
+		.CLKOUT1_DIVIDE(8),
+		.CLKOUT2_DIVIDE(8),
+		.CLKOUT3_DIVIDE(8),
 		.CLKOUT4_CASCADE("FALSE"),
-		.CLKOUT4_DIVIDE(FIXED_DIV),
-		.CLKOUT5_DIVIDE(FIXED_DIV),
-		.CLKOUT6_DIVIDE(FIXED_DIV),
+		.CLKOUT4_DIVIDE(8),
+		.CLKOUT5_DIVIDE(8),
+		.CLKOUT6_DIVIDE(8),
 		.COMPENSATION("AUTO"),          // AUTO, BUF_IN, EXTERNAL, INTERNAL, ZHOLD
-		.DIVCLK_DIVIDE(VCO_DIV),              // Master division value (1-106)
+		.DIVCLK_DIVIDE(1),              // Master division value (1-106)
 		// Programmable Inversion Attributes: Specifies built-in programmable inversion on specific pins
 		.IS_CLKFBIN_INVERTED(1'b0),     // Optional inversion for CLKFBIN
 		.IS_CLKIN1_INVERTED(1'b0),      // Optional inversion for CLKIN1
@@ -394,7 +392,7 @@ module Auto_ETS#(
 		.CDDCDONE(),         // 1-bit output: Clock dynamic divide done
 		.CLKFBSTOPPED(), // 1-bit output: Feedback clock stopped
 		.CLKINSTOPPED(), // 1-bit output: Input clock stopped
-		.LOCKED(locked),             // 1-bit output: LOCK
+		.LOCKED(),             // 1-bit output: LOCK
 		.CDDCREQ(1'b0),           // 1-bit input: Request to dynamic divide clock
 		// Clock Inputs inputs: Clock inputs
 		.CLKIN1(free_run_clk),             // 1-bit input: Primary clock
@@ -414,9 +412,9 @@ module Auto_ETS#(
 		.DWE(0),                   // 1-bit input: DRP write enable
 		// Dynamic Phase Shift Ports inputs: Ports used for dynamic phase shifting of the outputs
 		.PSCLK(ps_clk),               // 1-bit input: Phase shift clock
-		.PSEN(ps_en),                 // 1-bit input: Phase shift enable
-		.PSINCDEC(ps_incdec),         // 1-bit input: Phase shift increment/decrement
-		.PSDONE(ps_done)             // 1-bit output: Phase shift done
+		.PSEN(ps_en1),                 // 1-bit input: Phase shift enable
+		.PSINCDEC(1'b0),         // 1-bit input: Phase shift increment/decrement
+		.PSDONE(ps_done1)             // 1-bit output: Phase shift done
 	);
 	BUFG BUFG_CLKFB (
 		.O(CLKFB_IN), // 1-bit output: Clock output
@@ -425,7 +423,114 @@ module Auto_ETS#(
 	wire CLKFB_IN1,CLKFB_OUT1;
 	MMCME3_ADV #(
 		.BANDWIDTH("OPTIMIZED"),        // Jitter programming (HIGH, LOW, OPTIMIZED)
-		.CLKFBOUT_MULT_F(VCO_MUL),          // Multiply value for all CLKOUT (2.000-64.000)
+		.CLKFBOUT_MULT_F(10),          // Multiply value for all CLKOUT (2.000-64.000)
+		.CLKFBOUT_PHASE(0.0),           // Phase offset in degrees of CLKFB (-360.000-360.000)
+		// CLKIN_PERIOD: Input clock period in ns units, ps resolution (i.e. 33.333 is 30 MHz).
+		.CLKIN1_PERIOD(CLK_IN_PEO),
+		.CLKIN2_PERIOD(0.0),
+		.CLKOUT0_DIVIDE_F(10.000),         // Divide amount for CLKOUT0 (1.000-128.000)
+		// CLKOUT0_DUTY_CYCLE - CLKOUT6_DUTY_CYCLE: Duty cycle for CLKOUT outputs (0.001-0.999).
+		.CLKOUT0_DUTY_CYCLE(0.5),
+		.CLKOUT1_DUTY_CYCLE(0.5),
+		.CLKOUT2_DUTY_CYCLE(0.5),
+		.CLKOUT3_DUTY_CYCLE(0.5),
+		.CLKOUT4_DUTY_CYCLE(0.5),
+		.CLKOUT5_DUTY_CYCLE(0.5),
+		.CLKOUT6_DUTY_CYCLE(0.5),
+		// CLKOUT0_PHASE - CLKOUT6_PHASE: Phase offset for CLKOUT outputs (-360.000-360.000).
+		.CLKOUT0_PHASE(0.0),
+		.CLKOUT1_PHASE(0.0),
+		.CLKOUT2_PHASE(0.0),
+		.CLKOUT3_PHASE(0.0),
+		.CLKOUT4_PHASE(0.0),
+		.CLKOUT5_PHASE(0.0),
+		.CLKOUT6_PHASE(0.0),
+		// CLKOUT1_DIVIDE - CLKOUT6_DIVIDE: Divide amount for CLKOUT (1-128)
+		.CLKOUT1_DIVIDE(10),
+		.CLKOUT2_DIVIDE(10),
+		.CLKOUT3_DIVIDE(10),
+		.CLKOUT4_CASCADE("FALSE"),
+		.CLKOUT4_DIVIDE(10),
+		.CLKOUT5_DIVIDE(10),
+		.CLKOUT6_DIVIDE(10),
+		.COMPENSATION("AUTO"),          // AUTO, BUF_IN, EXTERNAL, INTERNAL, ZHOLD
+		.DIVCLK_DIVIDE(1),              // Master division value (1-106)
+		// Programmable Inversion Attributes: Specifies built-in programmable inversion on specific pins
+		.IS_CLKFBIN_INVERTED(1'b0),     // Optional inversion for CLKFBIN
+		.IS_CLKIN1_INVERTED(1'b0),      // Optional inversion for CLKIN1
+		.IS_CLKIN2_INVERTED(1'b0),      // Optional inversion for CLKIN2
+		.IS_CLKINSEL_INVERTED(1'b0),    // Optional inversion for CLKINSEL
+		.IS_PSEN_INVERTED(1'b0),        // Optional inversion for PSEN
+		.IS_PSINCDEC_INVERTED(1'b0),    // Optional inversion for PSINCDEC
+		.IS_PWRDWN_INVERTED(1'b0),      // Optional inversion for PWRDWN
+		.IS_RST_INVERTED(1'b0),         // Optional inversion for RST
+		// REF_JITTER: Reference input jitter in UI (0.000-0.999).
+		.REF_JITTER1(0.0),
+		.REF_JITTER2(0.0),
+		.STARTUP_WAIT("FALSE"),         // Delays DONE until MMCM is locked (FALSE, TRUE)
+		// Spread Spectrum: Spread Spectrum Attributes
+		.SS_EN("FALSE"),                // Enables spread spectrum (FALSE, TRUE)
+		.SS_MODE("CENTER_HIGH"),        // CENTER_HIGH, CENTER_LOW, DOWN_HIGH, DOWN_LOW
+		.SS_MOD_PERIOD(10000),          // Spread spectrum modulation period (ns) (4000-40000)
+		// USE_FINE_PS: Fine phase shift enable (TRUE/FALSE)
+		.CLKFBOUT_USE_FINE_PS("FALSE"),
+		.CLKOUT0_USE_FINE_PS("FALSE"),
+		.CLKOUT1_USE_FINE_PS("TRUE"),
+		.CLKOUT2_USE_FINE_PS("FALSE"),
+		.CLKOUT3_USE_FINE_PS("FALSE"),
+		.CLKOUT4_USE_FINE_PS("FALSE"),
+		.CLKOUT5_USE_FINE_PS("FALSE"),
+		.CLKOUT6_USE_FINE_PS("FALSE") 
+	)
+	MMCME3_ADV_inst1 (
+	// Clock Outputs outputs: User configurable clock outputs
+		.CLKOUT0(),           // 1-bit output: CLKOUT0
+		.CLKOUT0B(),         // 1-bit output: Inverted CLKOUT0
+		.CLKOUT1(CLKOUT2),           // 1-bit output: Primary clock
+		.CLKOUT1B(),         // 1-bit output: Inverted CLKOUT1
+		.CLKOUT2(),           // 1-bit output: CLKOUT2
+		.CLKOUT2B(),         // 1-bit output: Inverted CLKOUT2
+		.CLKOUT3(),           // 1-bit output: CLKOUT3
+		.CLKOUT3B(),         // 1-bit output: Inverted CLKOUT3
+		.CLKOUT4(),           // 1-bit output: CLKOUT4
+		.CLKOUT5(),           // 1-bit output: CLKOUT5
+		.CLKOUT6(),           // 1-bit output: CLKOUT6
+		// Feedback outputs: Clock feedback ports
+		.CLKFBIN(CLKFB_IN1),            // 1-bit input: Feedback clock
+		.CLKFBOUT(CLKFB_OUT1),         // 1-bit output: Feedback clock
+		.CLKFBOUTB(),       // 1-bit output: Inverted CLKFBOUT
+		// Status Ports outputs: MMCM status ports
+		.CDDCDONE(),         // 1-bit output: Clock dynamic divide done
+		.CLKFBSTOPPED(), // 1-bit output: Feedback clock stopped
+		.CLKINSTOPPED(), // 1-bit output: Input clock stopped
+		.LOCKED(),             // 1-bit output: LOCK
+		.CDDCREQ(1'b0),           // 1-bit input: Request to dynamic divide clock
+		// Clock Inputs inputs: Clock inputs
+		.CLKIN1(shifting_clk),             // 1-bit input: Primary clock
+		.CLKIN2(),             // 1-bit input: Secondary clock
+		// Control Ports inputs: MMCM control ports
+		.CLKINSEL(CLK_SW),         // 1-bit input: Clock select, High=CLKIN1 Low=CLKIN2
+		.PWRDWN(1'b0),             // 1-bit input: Power-down
+		// Feedback inputs: Clock feedback ports
+		.RST(free_run_rst),                   // 1-bit input: Reset
+		// DRP Ports inputs: Dynamic reconfiguration ports
+		.DO(),                     // 16-bit output: DRP data
+		.DRDY(),                 // 1-bit output: DRP ready
+		.DADDR(0),               // 7-bit input: DRP address
+		.DCLK(drp_dclk),                 // 1-bit input: DRP clock
+		.DEN(0),                   // 1-bit input: DRP enable
+		.DI(0),                     // 16-bit input: DRP data
+		.DWE(0),                   // 1-bit input: DRP write enable
+		// Dynamic Phase Shift Ports inputs: Ports used for dynamic phase shifting of the outputs
+		.PSCLK(ps_clk),               // 1-bit input: Phase shift clock
+		.PSEN(ps_en2),                 // 1-bit input: Phase shift enable
+		.PSINCDEC(1'b1),         // 1-bit input: Phase shift increment/decrement
+		.PSDONE(ps_done2)             // 1-bit output: Phase shift done
+	);
+	wire CLKFB_IN2,CLKFB_OUT2;
+	MMCME3_ADV #(
+		.BANDWIDTH("OPTIMIZED"),        // Jitter programming (HIGH, LOW, OPTIMIZED)
+		.CLKFBOUT_MULT_F(10),          // Multiply value for all CLKOUT (2.000-64.000)
 		.CLKFBOUT_PHASE(0.0),           // Phase offset in degrees of CLKFB (-360.000-360.000)
 		// CLKIN_PERIOD: Input clock period in ns units, ps resolution (i.e. 33.333 is 30 MHz).
 		.CLKIN1_PERIOD(CLK_IN_PEO),
@@ -448,15 +553,15 @@ module Auto_ETS#(
 		.CLKOUT5_PHASE(0.0),
 		.CLKOUT6_PHASE(0.0),
 		// CLKOUT1_DIVIDE - CLKOUT6_DIVIDE: Divide amount for CLKOUT (1-128)
-		.CLKOUT1_DIVIDE(FIXED_DIV),
-		.CLKOUT2_DIVIDE(FIXED_DIV),
-		.CLKOUT3_DIVIDE(FIXED_DIV),
+		.CLKOUT1_DIVIDE(10),
+		.CLKOUT2_DIVIDE(10),
+		.CLKOUT3_DIVIDE(10),
 		.CLKOUT4_CASCADE("FALSE"),
-		.CLKOUT4_DIVIDE(FIXED_DIV),
-		.CLKOUT5_DIVIDE(FIXED_DIV),
-		.CLKOUT6_DIVIDE(FIXED_DIV),
+		.CLKOUT4_DIVIDE(10),
+		.CLKOUT5_DIVIDE(10),
+		.CLKOUT6_DIVIDE(10),
 		.COMPENSATION("AUTO"),          // AUTO, BUF_IN, EXTERNAL, INTERNAL, ZHOLD
-		.DIVCLK_DIVIDE(VCO_DIV),              // Master division value (1-106)
+		.DIVCLK_DIVIDE(1),              // Master division value (1-106)
 		// Programmable Inversion Attributes: Specifies built-in programmable inversion on specific pins
 		.IS_CLKFBIN_INVERTED(1'b0),     // Optional inversion for CLKFBIN
 		.IS_CLKIN1_INVERTED(1'b0),      // Optional inversion for CLKIN1
@@ -484,11 +589,11 @@ module Auto_ETS#(
 		.CLKOUT5_USE_FINE_PS("FALSE"),
 		.CLKOUT6_USE_FINE_PS("FALSE") 
 	)
-	MMCME3_ADV_inst1 (
+	MMCME3_ADV_inst2 (
 	// Clock Outputs outputs: User configurable clock outputs
-		.CLKOUT0(CLKOUT2),           // 1-bit output: CLKOUT0
+		.CLKOUT0(CLKOUT3),           // 1-bit output: CLKOUT0
 		.CLKOUT0B(),         // 1-bit output: Inverted CLKOUT0
-		.CLKOUT1(CLKOUT3),           // 1-bit output: Primary clock
+		.CLKOUT1(CLKOUT4),           // 1-bit output: Primary clock
 		.CLKOUT1B(),         // 1-bit output: Inverted CLKOUT1
 		.CLKOUT2(),           // 1-bit output: CLKOUT2
 		.CLKOUT2B(),         // 1-bit output: Inverted CLKOUT2
@@ -498,8 +603,8 @@ module Auto_ETS#(
 		.CLKOUT5(),           // 1-bit output: CLKOUT5
 		.CLKOUT6(),           // 1-bit output: CLKOUT6
 		// Feedback outputs: Clock feedback ports
-		.CLKFBIN(CLKFB_IN1),            // 1-bit input: Feedback clock
-		.CLKFBOUT(CLKFB_OUT1),         // 1-bit output: Feedback clock
+		.CLKFBIN(CLKFB_IN2),            // 1-bit input: Feedback clock
+		.CLKFBOUT(CLKFB_OUT2),         // 1-bit output: Feedback clock
 		.CLKFBOUTB(),       // 1-bit output: Inverted CLKFBOUT
 		// Status Ports outputs: MMCM status ports
 		.CDDCDONE(),         // 1-bit output: Clock dynamic divide done
@@ -508,7 +613,7 @@ module Auto_ETS#(
 		.LOCKED(locked),             // 1-bit output: LOCK
 		.CDDCREQ(1'b0),           // 1-bit input: Request to dynamic divide clock
 		// Clock Inputs inputs: Clock inputs
-		.CLKIN1(shifting_clk),             // 1-bit input: Primary clock
+		.CLKIN1(shifting_clk2),             // 1-bit input: Primary clock
 		.CLKIN2(),             // 1-bit input: Secondary clock
 		// Control Ports inputs: MMCM control ports
 		.CLKINSEL(CLK_SW),         // 1-bit input: Clock select, High=CLKIN1 Low=CLKIN2
@@ -538,19 +643,101 @@ module Auto_ETS#(
 		.O(shifting_clk), // 1-bit output: Clock output
 		.I(CLKOUT1)  // 1-bit input: Clock input
 	);
+	wire shifting_clk2;
 	BUFG BUFG_CLKOUT2_shifing (
-		.O(swing_clk), // 1-bit output: Clock output
+		.O(shifting_clk2), // 1-bit output: Clock output
 		.I(CLKOUT2)  // 1-bit input: Clock input
 	);
 
-	BUFG BUFG_CLKOUT3_imp (
-		.O(sample_clk), // 1-bit output: Clock output
+	BUFG BUFG_CLKOUT3_Sample (
+		.O(swing_clk), // 1-bit output: Clock output
 		.I(CLKOUT3)  // 1-bit input: Clock input
+	);
+	BUFG BUFG_CLKOUT4_imp (
+		.O(sample_clk), // 1-bit output: Clock output
+		.I(CLKOUT4)  // 1-bit input: Clock input
 	);
 
 	BUFG BUFG_CLKFB1 (
 		.O(CLKFB_IN1), // 1-bit output: Clock output
 		.I(CLKFB_OUT1)  // 1-bit input: Clock input
 	);
+	BUFG BUFG_CLKFB2 (
+		.O(CLKFB_IN2), // 1-bit output: Clock output
+		.I(CLKFB_OUT2)  // 1-bit input: Clock input
+	);
+	localparam IDLE = 3'd0;
+	localparam SHIFT1 = 3'd1;
+	localparam WAIT_SHIFT1 = 3'd2;
+	localparam SHIFT2 = 3'd3;
+	localparam WAIT_SHIFT2 = 3'd4;
+	localparam DONE = 3'd5;
 
+	
+
+	always @(posedge ps_clk or negedge S_AXI_ARESETN) begin
+		if (~S_AXI_ARESETN) begin
+			// reset
+			state <= IDLE;
+		end
+		else begin
+			state <= nextstate;
+		end
+	end
+	always @ (*) begin
+		ps_en1 = 0;
+		ps_en2 = 0;
+		ps_done = 0;
+		nextstate = state;
+		case(state)
+			IDLE:begin
+				ps_en1 = 0;
+				ps_en2 = 0;
+				ps_done = 0;
+				if(ps_en) begin
+					nextstate = SHIFT1;
+				end
+			end
+			SHIFT1:begin
+				ps_en1 = 1;
+				ps_en2 = 0;
+				ps_done = 0;
+				nextstate = WAIT_SHIFT1;
+			end
+			WAIT_SHIFT1:begin
+				ps_en1 = 0;
+				ps_en2 = 0;
+				ps_done = 0;
+				if(ps_done1) begin
+					nextstate = SHIFT2;
+				end
+			end
+			SHIFT2:begin
+				ps_en1 = 0;
+				ps_en2 = 1;
+				ps_done = 0;
+				nextstate = WAIT_SHIFT2;
+			end
+			WAIT_SHIFT2:begin
+				ps_en1 = 0;
+				ps_en2 = 0;
+				ps_done = 0;
+				if(ps_done2) begin
+					nextstate = DONE;
+				end
+			end
+			DONE:begin
+				ps_en1 = 0;
+				ps_en2 = 0;
+				ps_done = 1;
+				nextstate = IDLE;
+			end
+			default:begin
+				ps_en1 = 0;
+				ps_en2 = 0;
+				ps_done = 0;
+				nextstate = IDLE;
+			end
+		endcase
+	end
 endmodule

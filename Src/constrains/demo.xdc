@@ -40,8 +40,7 @@ set_property DQS_BIAS TRUE [get_ports S11_CMP_n]
 set_property DQS_BIAS TRUE [get_ports ref_CMP_p]
 set_property DQS_BIAS TRUE [get_ports ref_CMP_n]
 
-create_clock -period 6.400 -name REF_CLK_IN -waveform {0.000 3.200} IBUFDS_GTE4_inst/O
+create_clock -period 10.00 -name REF_CLK_IN -waveform {0.000 5.000} IBUFDS_GTE4_inst/O
 
-create_clock -period 6.957 -name REF_CLK -waveform {0.000 3.479} -add GTH_inst/inst/gen_gtwizard_gthe4_top.gtwizard_ultrascale_0_gtwizard_gthe4_inst/gen_gtwizard_gthe4.gen_rx_user_clocking_internal.gen_single_instance.gtwiz_userclk_rx_inst/gen_gtwiz_userclk_rx_main.bufg_gt_usrclk_inst/O
-create_clock -period 6.957 -name SYS_CLK -waveform {0.000 3.479} -add ZCU104_MCU_i/Auto_ETS_0/inst/MMCME3_ADV_inst/CLKOUT0
-create_clock -period 6.957 -name SHIFTING_CLK -waveform {0.000 3.479} -add ZCU104_MCU_i/Auto_ETS_0/inst/MMCME3_ADV_inst/CLKOUT1
+create_clock -period 10 -name REF_CLK -waveform {0.000 5.00} -add GTH_inst/inst/gen_gtwizard_gthe4_top.gtwizard_ultrascale_0_gtwizard_gthe4_inst/gen_gtwizard_gthe4.gen_rx_user_clocking_internal.gen_single_instance.gtwiz_userclk_rx_inst/gen_gtwiz_userclk_rx_main.bufg_gt_usrclk_inst/O
+
