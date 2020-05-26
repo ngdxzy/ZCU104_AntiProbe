@@ -41,7 +41,8 @@ module StreamETS#(
 		output swing_clk,
 		output reg [79:0] GTH_DATA,
 
-		input cmp_data,
+		input cmp_data_p0,
+		input cmp_data_p1,
 		(* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 M_AXIS_aclk CLK" *)
 		(* X_INTERFACE_PARAMETER = "ASSOCIATED_BUSIF M_AXIS ASSOCIATED_RESET M_AXIS_aresetn, FREQ_HZ 100000000" *)
 		input M_AXIS_aclk,
@@ -124,9 +125,10 @@ module StreamETS#(
 	wire [31:0] gth_data_phase_7 = slv_reg9;
 	wire [31:0] gth_data_phase_8 = slv_reg10;
 	wire [31:0] gth_data_phase_9 = slv_reg11;
+	wire sw = slv_reg12[0];
 
 	reg [3:0] counter;
-	always @(posedge system_clk or negedge rst_n) begin
+	always @(posedge free_run_clk or negedge rst_n) begin
 		if (~rst_n) begin
 			counter <= 0;
 		end
@@ -137,19 +139,31 @@ module StreamETS#(
 			counter <= 0;
 		end
 	end
+	(* max_fanout= 2 *)reg cmp_data;
+
+	always @ (posedge sample_clk) begin
+		case(sw)
+			1'b0: begin
+				cmp_data <= cmp_data_p0;
+			end
+			1'b1: begin
+				cmp_data <= cmp_data_p1;
+			end
+		endcase
+	end
 
 	always @ (*) begin
 		case(counter)
-			4'd0: begin GTH_DATA = {gth_data_phase_0,48'd0}; end
-			4'd1: begin GTH_DATA = {gth_data_phase_1,48'd0}; end
-			4'd2: begin GTH_DATA = {gth_data_phase_2,48'd0}; end
-			4'd3: begin GTH_DATA = {gth_data_phase_3,48'd0}; end
-			4'd4: begin GTH_DATA = {gth_data_phase_4,48'd0}; end
-			4'd5: begin GTH_DATA = {gth_data_phase_5,48'd0}; end
-			4'd6: begin GTH_DATA = {gth_data_phase_6,48'd0}; end
-			4'd7: begin GTH_DATA = {gth_data_phase_7,48'd0}; end
-			4'd8: begin GTH_DATA = {gth_data_phase_8,48'd0}; end
-			4'd9: begin GTH_DATA = {gth_data_phase_9,48'd0}; end
+			4'd0: begin GTH_DATA = {48'd0,gth_data_phase_0}; end
+			4'd1: begin GTH_DATA = {48'd0,gth_data_phase_1}; end
+			4'd2: begin GTH_DATA = {48'd0,gth_data_phase_2}; end
+			4'd3: begin GTH_DATA = {48'd0,gth_data_phase_3}; end
+			4'd4: begin GTH_DATA = {48'd0,gth_data_phase_4}; end
+			4'd5: begin GTH_DATA = {48'd0,gth_data_phase_5}; end
+			4'd6: begin GTH_DATA = {48'd0,gth_data_phase_6}; end
+			4'd7: begin GTH_DATA = {48'd0,gth_data_phase_7}; end
+			4'd8: begin GTH_DATA = {48'd0,gth_data_phase_8}; end
+			4'd9: begin GTH_DATA = {48'd0,gth_data_phase_9}; end
 			default: begin
 				GTH_DATA = 0;
 			end

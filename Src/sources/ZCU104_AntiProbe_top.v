@@ -86,7 +86,7 @@ module ZCU104_AntiProbe_top(
 	) OBUFDS_ref (
 		.O(LE_ref_p),     // Diff_p output (connect directly to top-level port)
 		.OB(LE_ref_n),   // Diff_n output (connect directly to top-level port)
-		.I(sample_clk)      // Buffer input
+		.I(~sample_clk)      // Buffer input
 	);
 	OBUFDS #(
 		.IOSTANDARD("DEFAULT"), // Specify the output I/O standard
@@ -94,7 +94,7 @@ module ZCU104_AntiProbe_top(
 	) OBUFDS_S11 (
 		.O(LE_S11_p),     // Diff_p output (connect directly to top-level port)
 		.OB(LE_S11_n),   // Diff_n output (connect directly to top-level port)
-		.I(sample_clk)      // Buffer input
+		.I(~sample_clk)      // Buffer input
 	);
 	OBUFDS #(
 		.IOSTANDARD("DEFAULT"), // Specify the output I/O standard
@@ -102,29 +102,30 @@ module ZCU104_AntiProbe_top(
 	) OBUFDS_S21 (
 		.O(LE_S21_p),     // Diff_p output (connect directly to top-level port)
 		.OB(LE_S21_n),   // Diff_n output (connect directly to top-level port)
-		.I(sample_clk)      // Buffer input
+		.I(~sample_clk)      // Buffer input
 	);
 
 	assign S21_swing = swing_clk;
 	assign S11_swing = swing_clk;
 	assign ref_swing = swing_clk;
 
-	reg cmp_data_ref_r;
+	(* max_fanout=2 *)reg cmp_data_ref_r;
 	always @(posedge sample_clk) begin
 		cmp_data_ref_r <= CMP_DATA_ref;
 	end
-	reg cmp_data_S11_r;
+	(* max_fanout=2 *)reg cmp_data_S11_r;
 	always @(posedge sample_clk) begin
 		cmp_data_S11_r <= CMP_DATA_S11;
 	end
-	reg cmp_data_S21_r;
+	(* max_fanout=2 *)reg cmp_data_S21_r;
 	always @(posedge sample_clk) begin
 		cmp_data_S21_r <= CMP_DATA_S21;
 	end
 
 	ZCU104_AntiProbetop inst_ZCU104_AntiProbetop_wrapper(
 		.GTH_DATA        (GTH_DATA),
-		.cmp_data        (cmp_data),
+		.cmp_data_p0     (cmp_data_S11_r),
+		.cmp_data_p1     (cmp_data_S21_r),
 		.free_run_clk    (free_run_clk),
 		.free_run_rst_n  (free_run_rst_n),
 		.ref_clk         (ref_clk_fb),

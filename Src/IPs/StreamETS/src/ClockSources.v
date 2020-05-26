@@ -50,13 +50,14 @@ module ClockSources#(
     wire CLKFB_IN_0,CLKFB_OUT_0;
     wire CLKFB_IN_1,CLKFB_OUT_1;
     wire CLKFB_IN_2,CLKFB_OUT_2;
+    wire ps_done1,ps_done2;
     wire shifting_clk0,shifting_clk1;
     wire ps_clk = sample_clk;
     wire ps_en1 = shift;
     assign shift_done = ps_done1;
  //    reg ps_en1,ps_en2;
  //    reg ps_done;
- //    wire ps_done1,ps_done2;
+ //    
  //    reg [2:0] state,nextstate;
  //    localparam IDLE = 3'd0;
 	// localparam SHIFT1 = 3'd1;
@@ -476,7 +477,7 @@ module ClockSources#(
 		// Dynamic Phase Shift Ports inputs: Ports used for dynamic phase shifting of the outputs
 		.PSCLK(ps_clk),               // 1-bit input: Phase shift clock
 		.PSEN(1'b0),                 // 1-bit input: Phase shift enable
-		.PSINCDEC(0),         // 1-bit input: Phase shift increment/decrement
+		.PSINCDEC(1),         // 1-bit input: Phase shift increment/decrement
 		.PSDONE()             // 1-bit output: Phase shift done
 	);
 

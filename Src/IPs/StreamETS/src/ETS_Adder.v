@@ -88,6 +88,7 @@ module ETS_Adder(
 	output [31:0] data,
 
 	input start,
+	input enc,
 	output reg done
     );
 
@@ -137,7 +138,7 @@ module ETS_Adder(
 		end
 		endcase
 	end
-	wire run_enable = en;
+	wire run_enable = en & enc;
 	Counter_32 U_Counter_d(
 		.clk(clk),
 		.rst_n(~reset),

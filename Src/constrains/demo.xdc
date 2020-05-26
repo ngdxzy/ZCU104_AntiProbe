@@ -40,8 +40,20 @@ set_property DQS_BIAS TRUE [get_ports S11_CMP_n]
 set_property DQS_BIAS TRUE [get_ports ref_CMP_p]
 set_property DQS_BIAS TRUE [get_ports ref_CMP_n]
 
-create_clock -period 6.400 -name REF_CLK_IN -waveform {0.000 3.200} IBUFDS_GTE4_inst/O
 
-create_clock -period 6.957 -name REF_CLK -waveform {0.000 3.479} -add GTH_inst/inst/gen_gtwizard_gthe4_top.gtwizard_ultrascale_0_gtwizard_gthe4_inst/gen_gtwizard_gthe4.gen_rx_user_clocking_internal.gen_single_instance.gtwiz_userclk_rx_inst/gen_gtwiz_userclk_rx_main.bufg_gt_usrclk_inst/O
-create_clock -period 6.957 -name SYS_CLK -waveform {0.000 3.479} -add ZCU104_MCU_i/Auto_ETS_0/inst/MMCME3_ADV_inst/CLKOUT0
-create_clock -period 6.957 -name SHIFTING_CLK -waveform {0.000 3.479} -add ZCU104_MCU_i/Auto_ETS_0/inst/MMCME3_ADV_inst/CLKOUT1
+
+set_property EQUALIZATION EQ_LEVEL0 [get_ports ref_CMP_p]
+set_property DIFF_TERM_ADV TERM_100 [get_ports ref_CMP_p]
+
+create_clock -period 10.000 -name REF_CLK -waveform {0.000 5.000} [get_nets {GTH_inst/gtwiz_userclk_tx_usrclk2_out[0]}]
+create_generated_clock -name System_CLK -source [get_pins {GTH_inst/gtwiz_userclk_tx_usrclk2_out[0]}] -multiply_by 1 -add -master_clock REF_CLK [get_pins inst_ZCU104_AntiProbetop_wrapper/StreamETS_0/inst/inst_ClockSources/system_clk]
+create_generated_clock -name Sample_CLK -source [get_pins {GTH_inst/gtwiz_userclk_tx_usrclk2_out[0]}] -multiply_by 1 -add -master_clock REF_CLK [get_pins inst_ZCU104_AntiProbetop_wrapper/StreamETS_0/inst/inst_ClockSources/sample_clk]
+create_clock -period 6.400 -name ref_clk_in_p -waveform {0.000 3.200} [get_ports ref_clk_in_p]
+create_generated_clock -name S11_Latch_CLK -source [get_pins inst_ZCU104_AntiProbetop_wrapper/StreamETS_0/inst/inst_ClockSources/sample_clk] -multiply_by 1 -invert -add -master_clock Sample_CLK [get_ports LE_S11_p]
+create_generated_clock -name S21_Latch_CLK -source [get_pins inst_ZCU104_AntiProbetop_wrapper/StreamETS_0/inst/inst_ClockSources/sample_clk] -multiply_by 1 -invert -add -master_clock Sample_CLK [get_ports LE_S21_p]
+
+set_input_delay -clock [get_clocks *S11*] -clock_fall -max -add_delay 2.500 [get_ports S11_CMP_p]
+set_input_delay -clock [get_clocks *S21*] -clock_fall -max -add_delay 2.500 [get_ports S21_CMP_p]
+set_input_delay -clock [get_clocks *S21*] -clock_fall -min -add_delay -2.500 [get_ports S21_CMP_p]
+set_input_delay -clock [get_clocks *S11*] -clock_fall -min -add_delay -2.500 [get_ports S11_CMP_p]
+
