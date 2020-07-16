@@ -65,6 +65,15 @@ start_step init_design
 set ACTIVE_STEP init_design
 set rc [catch {
   create_msg_db init_design.pb
+  set src_rc [catch { 
+    puts "source /home/alfred/projects/vivado/ZCU104/inpad_adc/Scripts/prePlace.tcl"
+    source /home/alfred/projects/vivado/ZCU104/inpad_adc/Scripts/prePlace.tcl
+  } _RESULT] 
+  if {$src_rc} { 
+    send_msg_id runtcl-1 error "$_RESULT"
+    send_msg_id runtcl-2 error "sourcing script /home/alfred/projects/vivado/ZCU104/inpad_adc/Scripts/prePlace.tcl failed"
+    return -code error
+  }
   set_param chipscope.maxJobs 2
   create_project -in_memory -part xczu7ev-ffvc1156-2-e
   set_property board_part xilinx.com:zcu104:part0:1.1 [current_project]

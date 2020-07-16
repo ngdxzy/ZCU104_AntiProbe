@@ -39,10 +39,14 @@ module StreamETS#(
 		(* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 swing_clk CLK" *)
 		(* X_INTERFACE_PARAMETER = "FREQ_HZ 23188000" *)
 		output swing_clk,
+		output jitter_clk,
+		output T,
 		output reg [79:0] GTH_DATA,
 
 		input cmp_data_p0,
-		input cmp_data_p1,
+		input cmp_data_p1,	
+		input cmp_data_p2,
+		input cmp_data_p3,
 		(* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 M_AXIS_aclk CLK" *)
 		(* X_INTERFACE_PARAMETER = "ASSOCIATED_BUSIF M_AXIS ASSOCIATED_RESET M_AXIS_aresetn, FREQ_HZ 100000000" *)
 		input M_AXIS_aclk,
@@ -125,8 +129,15 @@ module StreamETS#(
 	wire [31:0] gth_data_phase_7 = slv_reg9;
 	wire [31:0] gth_data_phase_8 = slv_reg10;
 	wire [31:0] gth_data_phase_9 = slv_reg11;
-	wire sw = slv_reg12[0];
-
+	wire [1:0]sw = slv_reg12[1:0];
+	wire Static_Counter_en = slv_reg13[0];
+	wire Static_Counter_done;
+	wire jitter_shift = slv_reg15[8];
+	wire jitter_incdec = slv_reg15[0];
+	wire jitter_shift_done;
+	wire trigger_clk;
+	wire [31:0] Static_Counter;
+	assign T = trigger_clk & GTH_DATA[0];
 	reg [3:0] counter;
 	always @(posedge free_run_clk or negedge rst_n) begin
 		if (~rst_n) begin
@@ -143,15 +154,31 @@ module StreamETS#(
 
 	always @ (posedge sample_clk) begin
 		case(sw)
-			1'b0: begin
+			2'b00: begin
 				cmp_data <= cmp_data_p0;
 			end
-			1'b1: begin
+			2'b01: begin
 				cmp_data <= cmp_data_p1;
+			end
+			2'b10: begin
+				cmp_data <= cmp_data_p2;
+			end
+			2'b11: begin
+				cmp_data <= cmp_data_p3;
 			end
 		endcase
 	end
+	ETS_Adder inst_ETS_Adder_Static(
+		.clk(sample_clk),
+		.reset(~rst_n),
+		.Average(32'd1024),
 
+		.data_in(cmp_data),
+		.data(Static_Counter),
+		.enc(1'b1),
+		.start(Static_Counter_en),
+		.done(Static_Counter_done)
+    );
 	always @ (*) begin
 		case(counter)
 			4'd0: begin GTH_DATA = {48'd0,gth_data_phase_0}; end
@@ -204,8 +231,8 @@ module StreamETS#(
 		.slv_wire11    (slv_reg11),
 		.slv_wire12    (slv_reg12),
 		.slv_wire13    (slv_reg13),
-		.slv_wire14    (slv_reg14),
-		.slv_wire15    (slv_reg15),
+		.slv_wire14    (Static_Counter),
+		.slv_wire15    ({7'd0,Static_Counter_done,7'd0,jitter_shift_done,slv_reg15[15:0]}),
 		.S_AXI_ACLK    (S_AXI_ACLK),
 		.S_AXI_ARESETN (S_AXI_ARESETN),
 		.S_AXI_AWADDR  (S_AXI_AWADDR),
@@ -263,8 +290,13 @@ module StreamETS#(
 		.shift        (shift),
 		.shift_done   (shift_done),
 		.system_clk   (system_clk),
+		.trigger_clk  (trigger_clk),
 		.sample_clk   (sample_clk),
 		.swing_clk    (swing_clk),
+		.jitter_clk   (jitter_clk),
+		.jitter_shift (jitter_shift),
+		.jitter_shift_done(jitter_shift_done),
+		.jitter_incdec (jitter_incdec),
 		.drp_di       (drp_di),
 		.drp_dclk     (drp_dclk),
 		.drp_den      (drp_den),

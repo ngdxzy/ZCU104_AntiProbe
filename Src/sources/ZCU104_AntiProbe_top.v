@@ -46,7 +46,10 @@ module ZCU104_AntiProbe_top(
 	output LE_S21_n,
 	output LE_S11_p,
 	output LE_S11_n,
-	output triger
+	inout PAD_P,
+	inout PAD_N,
+	inout PAD_P1,
+	inout PAD_N1
     );
 	wire gthrefclk00_in;
 	wire gtrefclk00_to_pl;
@@ -57,10 +60,14 @@ module ZCU104_AntiProbe_top(
 	wire [79:0] GTH_DATA;
 	wire swing_clk;
 	wire sample_clk;
+	wire jitter_clk;
+	wire T_C;
 
 	wire CMP_DATA_ref;
 	wire CMP_DATA_S11;
 	wire CMP_DATA_S21;
+	wire CMP_DATA_PAD0;
+	wire CMP_DATA_PAD1;
 
 	IBUFDS IBUFDS_ref (
 		.O(CMP_DATA_ref),   // 1-bit output: Buffer output
@@ -105,7 +112,7 @@ module ZCU104_AntiProbe_top(
 		.I(~sample_clk)      // Buffer input
 	);
 
-	assign S21_swing = swing_clk;
+	assign S21_swing = jitter_clk;
 	assign S11_swing = swing_clk;
 	assign ref_swing = swing_clk;
 
@@ -121,19 +128,48 @@ module ZCU104_AntiProbe_top(
 	always @(posedge sample_clk) begin
 		cmp_data_S21_r <= CMP_DATA_S21;
 	end
+	(* max_fanout=2 *)reg cmp_data_PAD0_r;
+	always @(posedge sample_clk) begin
+		cmp_data_PAD0_r <= CMP_DATA_PAD0;
+	end
+
+	(* max_fanout=2 *)reg cmp_data_PAD1_r;
+	always @(posedge sample_clk) begin
+		cmp_data_PAD1_r <= CMP_DATA_PAD1;
+	end
+	AnalogCMP inst_AnalogCMP0(
+		.comp_out (CMP_DATA_PAD0),
+		.PAD_P	  (PAD_P),
+		.PAD_N    (PAD_N),
+		.m_in_p   (jitter_clk),
+		.m_in_n   (1),
+		.m_en_n   (T_C)
+	);
+	AnalogCMP inst_AnalogCMP1(
+		.comp_out (CMP_DATA_PAD1),
+		.PAD_P	  (PAD_P1),
+		.PAD_N    (PAD_N1),
+		.m_in_p   (jitter_clk),
+		.m_in_n   (1),
+		.m_en_n   (T_C)
+	);
 
 	ZCU104_AntiProbetop inst_ZCU104_AntiProbetop_wrapper(
 		.GTH_DATA        (GTH_DATA),
 		.cmp_data_p0     (cmp_data_S11_r),
 		.cmp_data_p1     (cmp_data_S21_r),
+		.cmp_data_p2     (cmp_data_PAD1_r),
+		.cmp_data_p3     (cmp_data_PAD0_r),
 		.free_run_clk    (free_run_clk),
 		.free_run_rst_n  (free_run_rst_n),
 		.ref_clk         (ref_clk_fb),
 		.ref_clk_good    (ref_clk_fb_good),
 		.reset           (reset),
 		.sample_clk      (sample_clk),
+		.T 				 (T_C),
 		.sample_clk_good (system_clk_good),
-		.swing_clk       (swing_clk)
+		.swing_clk       (swing_clk),
+		.jitter_clk      (jitter_clk)
 	);
 
 	
@@ -159,7 +195,7 @@ module ZCU104_AntiProbe_top(
 		.gtwiz_reset_tx_done_out(),                        // output wire [0 : 0] gtwiz_reset_tx_done_out
 		.gtwiz_reset_rx_done_out(),                        // output wire [0 : 0] gtwiz_reset_rx_done_out
 		.gtwiz_userdata_tx_in(GTH_DATA),                              // input wire [31 : 0] gtwiz_userdata_tx_in
-		.gtwiz_userdata_rx_out(),                            // output wire [31 : 0] gtwiz_userdata_rx_out
+		.gtwiz_userdata_rx_out(),                            // output wire [79 : 0] gtwiz_userdata_rx_out
 		.gtrefclk01_in(gtrefclk00_in),                                            // input wire [0 : 0] gtrefclk00_in
 		.qpll1outclk_out(),                                        // output wire [0 : 0] qpll1outclk_out
 

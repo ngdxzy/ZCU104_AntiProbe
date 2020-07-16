@@ -26,9 +26,8 @@ set_property EQUALIZATION EQ_LEVEL0 [get_ports S11_CMP_p]
 set_property DIFF_TERM_ADV TERM_100 [get_ports S11_CMP_p]
 set_property DIFF_TERM_ADV TERM_100 [get_ports S21_CMP_p]
 set_property EQUALIZATION EQ_LEVEL0 [get_ports S21_CMP_p]
-set_property IOSTANDARD LVCMOS18 [get_ports triger]
-set_property PACKAGE_PIN K20 [get_ports triger]
-set_property SLEW FAST [get_ports triger]
+#set_property IOSTANDARD LVCMOS18 [get_ports triger]
+#set_property SLEW FAST [get_ports triger]
 set_property PACKAGE_PIN A13 [get_ports ref_CMP_p]
 set_property PACKAGE_PIN B10 [get_ports S11_CMP_p]
 set_property PACKAGE_PIN E9 [get_ports S21_CMP_p]
@@ -57,3 +56,26 @@ set_input_delay -clock [get_clocks *S21*] -clock_fall -max -add_delay 2.500 [get
 set_input_delay -clock [get_clocks *S21*] -clock_fall -min -add_delay -2.500 [get_ports S21_CMP_p]
 set_input_delay -clock [get_clocks *S11*] -clock_fall -min -add_delay -2.500 [get_ports S11_CMP_p]
 
+
+set_property IOSTANDARD DIFF_HSTL_I_18 [get_ports PAD_P]
+set_property IOSTANDARD DIFF_HSTL_I_18 [get_ports PAD_N]
+set_property PACKAGE_PIN C9 [get_ports triger]
+set_property PACKAGE_PIN L20 [get_ports PAD_P]
+
+set_property ODT RTT_48 [get_ports PAD_P]
+set_property ODT RTT_48 [get_ports PAD_N]
+set_property OUTPUT_IMPEDANCE RDRV_48_48 [get_ports PAD_P]
+set_property OUTPUT_IMPEDANCE RDRV_48_48 [get_ports PAD_N]
+
+set_property SLEW FAST [get_ports PAD_P]
+set_property SLEW FAST [get_ports PAD_N]
+
+set_property PACKAGE_PIN D12 [get_ports PAD_P1]
+set_property IOSTANDARD DIFF_HSTL_I_18 [get_ports PAD_P1]
+set_property IOSTANDARD DIFF_HSTL_I_18 [get_ports PAD_N1]
+
+
+set_property OUTPUT_IMPEDANCE RDRV_48_48 [get_ports PAD_P1]
+set_property OUTPUT_IMPEDANCE RDRV_48_48 [get_ports PAD_N1]
+set_property ODT RTT_NONE [get_ports PAD_P1]
+set_property ODT RTT_NONE [get_ports PAD_N1]
