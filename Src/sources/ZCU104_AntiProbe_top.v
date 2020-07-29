@@ -25,31 +25,18 @@ module ZCU104_AntiProbe_top(
 	input ref_clk_in_n,
 	input reset,
 
-	input S11_CMP_p,
-	input S11_CMP_n,	
-	input S21_CMP_p,
-	input S21_CMP_n,	
-	input ref_CMP_p,
-	input ref_CMP_n,
 	input gthrxn_in,
 	input gthrxp_in,
 	output gthtxn_out,
 	output gthtxp_out,
-	output S11_swing,
-	output S21_swing,
-	output ref_swing,
 	output ref_clk_fb_good,
 	output system_clk_good,
-	output LE_ref_p,
-	output LE_ref_n,
-	output LE_S21_p,
-	output LE_S21_n,
-	output LE_S11_p,
-	output LE_S11_n,
 	inout PAD_P,
 	inout PAD_N,
 	inout PAD_P1,
-	inout PAD_N1
+	inout PAD_N1,
+	inout PAD_P2,
+	inout PAD_N2
     );
 	wire gthrefclk00_in;
 	wire gtrefclk00_to_pl;
@@ -63,71 +50,11 @@ module ZCU104_AntiProbe_top(
 	wire jitter_clk;
 	wire T_C;
 
-	wire CMP_DATA_ref;
-	wire CMP_DATA_S11;
-	wire CMP_DATA_S21;
 	wire CMP_DATA_PAD0;
 	wire CMP_DATA_PAD1;
+	wire CMP_DATA_PAD2;
 
-	IBUFDS IBUFDS_ref (
-		.O(CMP_DATA_ref),   // 1-bit output: Buffer output
-		.I(ref_CMP_p),   // 1-bit input: Diff_p buffer input (connect directly to top-level port)
-		.IB(ref_CMP_n)  // 1-bit input: Diff_n buffer input (connect directly to top-level port)
-	);
 
-	IBUFDS IBUFDS_S11 (
-		.O(CMP_DATA_S11),   // 1-bit output: Buffer output
-		.I(S11_CMP_p),   // 1-bit input: Diff_p buffer input (connect directly to top-level port)
-		.IB(S11_CMP_n)  // 1-bit input: Diff_n buffer input (connect directly to top-level port)
-	);
-
-	IBUFDS IBUFDS_S21 (
-		.O(CMP_DATA_S21),   // 1-bit output: Buffer output
-		.I(S21_CMP_p),   // 1-bit input: Diff_p buffer input (connect directly to top-level port)
-		.IB(S21_CMP_n)  // 1-bit input: Diff_n buffer input (connect directly to top-level port)
-	);
-
-	OBUFDS #(
-		.IOSTANDARD("DEFAULT"), // Specify the output I/O standard
-		.SLEW("FAST")           // Specify the output slew rate
-	) OBUFDS_ref (
-		.O(LE_ref_p),     // Diff_p output (connect directly to top-level port)
-		.OB(LE_ref_n),   // Diff_n output (connect directly to top-level port)
-		.I(~sample_clk)      // Buffer input
-	);
-	OBUFDS #(
-		.IOSTANDARD("DEFAULT"), // Specify the output I/O standard
-		.SLEW("FAST")           // Specify the output slew rate
-	) OBUFDS_S11 (
-		.O(LE_S11_p),     // Diff_p output (connect directly to top-level port)
-		.OB(LE_S11_n),   // Diff_n output (connect directly to top-level port)
-		.I(~sample_clk)      // Buffer input
-	);
-	OBUFDS #(
-		.IOSTANDARD("DEFAULT"), // Specify the output I/O standard
-		.SLEW("FAST")           // Specify the output slew rate
-	) OBUFDS_S21 (
-		.O(LE_S21_p),     // Diff_p output (connect directly to top-level port)
-		.OB(LE_S21_n),   // Diff_n output (connect directly to top-level port)
-		.I(~sample_clk)      // Buffer input
-	);
-
-	assign S21_swing = jitter_clk;
-	assign S11_swing = swing_clk;
-	assign ref_swing = swing_clk;
-
-	(* max_fanout=2 *)reg cmp_data_ref_r;
-	always @(posedge sample_clk) begin
-		cmp_data_ref_r <= CMP_DATA_ref;
-	end
-	(* max_fanout=2 *)reg cmp_data_S11_r;
-	always @(posedge sample_clk) begin
-		cmp_data_S11_r <= CMP_DATA_S11;
-	end
-	(* max_fanout=2 *)reg cmp_data_S21_r;
-	always @(posedge sample_clk) begin
-		cmp_data_S21_r <= CMP_DATA_S21;
-	end
 	(* max_fanout=2 *)reg cmp_data_PAD0_r;
 	always @(posedge sample_clk) begin
 		cmp_data_PAD0_r <= CMP_DATA_PAD0;
@@ -136,6 +63,11 @@ module ZCU104_AntiProbe_top(
 	(* max_fanout=2 *)reg cmp_data_PAD1_r;
 	always @(posedge sample_clk) begin
 		cmp_data_PAD1_r <= CMP_DATA_PAD1;
+	end
+
+	(* max_fanout=2 *)reg cmp_data_PAD2_r;
+	always @(posedge sample_clk) begin
+		cmp_data_PAD2_r <= CMP_DATA_PAD2;
 	end
 	AnalogCMP inst_AnalogCMP0(
 		.comp_out (CMP_DATA_PAD0),
@@ -153,12 +85,20 @@ module ZCU104_AntiProbe_top(
 		.m_in_n   (1),
 		.m_en_n   (T_C)
 	);
+	AnalogCMP inst_AnalogCMP2(
+		.comp_out (CMP_DATA_PAD2),
+		.PAD_P	  (PAD_P2),
+		.PAD_N    (PAD_N2),
+		.m_in_p   (jitter_clk),
+		.m_in_n   (1),
+		.m_en_n   (T_C)
+	);
 
 	ZCU104_AntiProbetop inst_ZCU104_AntiProbetop_wrapper(
 		.GTH_DATA        (GTH_DATA),
-		.cmp_data_p0     (cmp_data_S11_r),
-		.cmp_data_p1     (cmp_data_S21_r),
-		.cmp_data_p2     (cmp_data_PAD1_r),
+		.cmp_data_p0     (cmp_data_PAD0_r),
+		.cmp_data_p1     (cmp_data_PAD1_r),
+		.cmp_data_p2     (cmp_data_PAD2_r),
 		.cmp_data_p3     (cmp_data_PAD0_r),
 		.free_run_clk    (free_run_clk),
 		.free_run_rst_n  (free_run_rst_n),

@@ -66,12 +66,12 @@ set ACTIVE_STEP init_design
 set rc [catch {
   create_msg_db init_design.pb
   set src_rc [catch { 
-    puts "source /home/alfred/projects/vivado/ZCU104/inpad_adc/Scripts/prePlace.tcl"
-    source /home/alfred/projects/vivado/ZCU104/inpad_adc/Scripts/prePlace.tcl
+    puts "source D:/vivado/ZCU104/inpad_adc/Scripts/prePlace.tcl"
+    source D:/vivado/ZCU104/inpad_adc/Scripts/prePlace.tcl
   } _RESULT] 
   if {$src_rc} { 
     send_msg_id runtcl-1 error "$_RESULT"
-    send_msg_id runtcl-2 error "sourcing script /home/alfred/projects/vivado/ZCU104/inpad_adc/Scripts/prePlace.tcl failed"
+    send_msg_id runtcl-2 error "sourcing script D:/vivado/ZCU104/inpad_adc/Scripts/prePlace.tcl failed"
     return -code error
   }
   set_param chipscope.maxJobs 2
@@ -79,20 +79,20 @@ set rc [catch {
   set_property board_part xilinx.com:zcu104:part0:1.1 [current_project]
   set_property design_mode GateLvl [current_fileset]
   set_param project.singleFileAddWarning.threshold 0
-  set_property webtalk.parent_dir /home/alfred/projects/vivado/ZCU104/ZCU_104_Anti_Probe/Work/ZCU104_AntiProbe.cache/wt [current_project]
-  set_property parent.project_path /home/alfred/projects/vivado/ZCU104/ZCU_104_Anti_Probe/Work/ZCU104_AntiProbe.xpr [current_project]
-  set_property ip_repo_paths /home/alfred/projects/vivado/ZCU104/ZCU_104_Anti_Probe/Src/IPs [current_project]
+  set_property webtalk.parent_dir D:/vivado/ZCU104/ZCU_104_Anti_Probe/Work/ZCU104_AntiProbe.cache/wt [current_project]
+  set_property parent.project_path D:/vivado/ZCU104/ZCU_104_Anti_Probe/Work/ZCU104_AntiProbe.xpr [current_project]
+  set_property ip_repo_paths D:/vivado/ZCU104/ZCU_104_Anti_Probe/Src/IPs [current_project]
   update_ip_catalog
-  set_property ip_output_repo /home/alfred/projects/vivado/ZCU104/ZCU_104_Anti_Probe/Work/ZCU104_AntiProbe.cache/ip [current_project]
+  set_property ip_output_repo D:/vivado/ZCU104/ZCU_104_Anti_Probe/Work/ZCU104_AntiProbe.cache/ip [current_project]
   set_property ip_cache_permissions {read write} [current_project]
   set_property XPM_LIBRARIES {XPM_CDC XPM_FIFO XPM_MEMORY} [current_project]
-  add_files -quiet /home/alfred/projects/vivado/ZCU104/ZCU_104_Anti_Probe/Work/ZCU104_AntiProbe.runs/synth_1/ZCU104_AntiProbe_top.dcp
+  add_files -quiet D:/vivado/ZCU104/ZCU_104_Anti_Probe/Work/ZCU104_AntiProbe.runs/synth_1/ZCU104_AntiProbe_top.dcp
   set_msg_config -source 4 -id {BD 41-1661} -limit 0
   set_param project.isImplRun true
-  add_files /home/alfred/projects/vivado/ZCU104/ZCU_104_Anti_Probe/Work/ZCU104_AntiProbe.srcs/sources_1/bd/ZCU104_AntiProbetop/ZCU104_AntiProbetop.bd
-  read_ip -quiet /home/alfred/projects/vivado/ZCU104/ZCU_104_Anti_Probe/Src/IPs/gtwizard_ultrascale_0/gtwizard_ultrascale_0.xci
+  add_files D:/vivado/ZCU104/ZCU_104_Anti_Probe/Work/ZCU104_AntiProbe.srcs/sources_1/bd/ZCU104_AntiProbetop/ZCU104_AntiProbetop.bd
+  read_ip -quiet D:/vivado/ZCU104/ZCU_104_Anti_Probe/Src/IPs/gtwizard_ultrascale_0/gtwizard_ultrascale_0.xci
   set_param project.isImplRun false
-  read_xdc /home/alfred/projects/vivado/ZCU104/ZCU_104_Anti_Probe/Src/constrains/demo.xdc
+  read_xdc D:/vivado/ZCU104/ZCU_104_Anti_Probe/Src/constrains/demo.xdc
   set_param project.isImplRun true
   link_design -top ZCU104_AntiProbe_top -part xczu7ev-ffvc1156-2-e
   set_param project.isImplRun false

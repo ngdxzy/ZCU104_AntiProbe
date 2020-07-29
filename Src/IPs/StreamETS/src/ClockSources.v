@@ -50,7 +50,7 @@ module ClockSources#(
     );
     localparam PLL0_MUL = 10;
     localparam PLL1_MUL = 10;
-    localparam PLL11_MUL = 9;
+    localparam PLL11_MUL =9;
     localparam PLL2_MUL = 16;
 
     wire CLKOUT00,CLKOUT01;
@@ -462,9 +462,9 @@ module ClockSources#(
 	)
 	MMCME3_ADV_inst_11 (
 	// Clock Outputs outputs: User configurable clock outputs
-		.CLKOUT0(),           // 1-bit output: CLKOUT0
+		.CLKOUT0(CLKOUT110),           // 1-bit output: CLKOUT0
 		.CLKOUT0B(),         // 1-bit output: Inverted CLKOUT0
-		.CLKOUT1(CLKOUT110),           // 1-bit output: Primary clock
+		.CLKOUT1(),           // 1-bit output: Primary clock
 		.CLKOUT1B(),         // 1-bit output: Inverted CLKOUT1
 		.CLKOUT2(),           // 1-bit output: CLKOUT2
 		.CLKOUT2B(),         // 1-bit output: Inverted CLKOUT2
