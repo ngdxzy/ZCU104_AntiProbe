@@ -41,6 +41,7 @@ module StreamETS#(
 		output swing_clk,
 		output jitter_clk,
 		output T,
+		output D,
 		output reg [79:0] GTH_DATA,
 
 		input cmp_data_p0,
@@ -135,9 +136,10 @@ module StreamETS#(
 	wire jitter_shift = slv_reg15[8];
 	wire jitter_incdec = slv_reg15[0];
 	wire jitter_shift_done;
-	wire trigger_clk;
+	wire trigger_long,trigger_short;
 	wire [31:0] Static_Counter;
-	assign T = trigger_clk & GTH_DATA[0];
+	assign T = trigger_long & GTH_DATA[0];
+	assign D = trigger_short & GTH_DATA[0];
 	reg [3:0] counter;
 	always @(posedge free_run_clk or negedge rst_n) begin
 		if (~rst_n) begin
@@ -290,7 +292,8 @@ module StreamETS#(
 		.shift        (shift),
 		.shift_done   (shift_done),
 		.system_clk   (system_clk),
-		.trigger_clk  (trigger_clk),
+		.trigger_long  (trigger_long),
+		.trigger_short  (trigger_short),
 		.sample_clk   (sample_clk),
 		.swing_clk    (swing_clk),
 		.jitter_clk   (jitter_clk),

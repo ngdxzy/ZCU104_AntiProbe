@@ -48,7 +48,7 @@ module ZCU104_AntiProbe_top(
 	wire swing_clk;
 	wire sample_clk;
 	wire jitter_clk;
-	wire T_C;
+	wire T_C,D_C;
 
 	wire CMP_DATA_PAD0;
 	wire CMP_DATA_PAD1;
@@ -74,7 +74,7 @@ module ZCU104_AntiProbe_top(
 		.PAD_P	  (PAD_P),
 		.PAD_N    (PAD_N),
 		.m_in_p   (jitter_clk),
-		.m_in_n   (1),
+		.m_in_n   (D_C),
 		.m_en_n   (T_C)
 	);
 	AnalogCMP inst_AnalogCMP1(
@@ -82,7 +82,7 @@ module ZCU104_AntiProbe_top(
 		.PAD_P	  (PAD_P1),
 		.PAD_N    (PAD_N1),
 		.m_in_p   (jitter_clk),
-		.m_in_n   (1),
+		.m_in_n   (D_C),
 		.m_en_n   (T_C)
 	);
 	AnalogCMP inst_AnalogCMP2(
@@ -90,7 +90,7 @@ module ZCU104_AntiProbe_top(
 		.PAD_P	  (PAD_P2),
 		.PAD_N    (PAD_N2),
 		.m_in_p   (jitter_clk),
-		.m_in_n   (1),
+		.m_in_n   (D_C),
 		.m_en_n   (T_C)
 	);
 
@@ -107,6 +107,7 @@ module ZCU104_AntiProbe_top(
 		.reset           (reset),
 		.sample_clk      (sample_clk),
 		.T 				 (T_C),
+		.D 				 (D_C),
 		.sample_clk_good (system_clk_good),
 		.swing_clk       (swing_clk),
 		.jitter_clk      (jitter_clk)

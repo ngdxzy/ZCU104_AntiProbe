@@ -28,7 +28,8 @@ module ClockSources#(
 	input shift,
 	output shift_done,
 
-	output trigger_clk,
+	output trigger_long,
+	output trigger_short,
 
 	output system_clk,
 	output sample_clk,
@@ -759,8 +760,11 @@ module ClockSources#(
 		.O(CLKFB_IN_3), // 1-bit output: Clock output
 		.I(CLKFB_OUT_3)  // 1-bit input: Clock input
 	);
-	assign t_n = ~t_p;
-	assign t_n1 = ~t_n;
-	assign t_n2 = ~t_n1;
-	assign trigger_clk = t_p & t_n2;
+	BUFG BUFG_Delay (
+		.O(t_n), // 1-bit output: Clock output
+		.I(t_p)  // 1-bit input: Clock input
+	);
+
+	assign trigger_long = t_p | t_n;
+	assign trigger_short = t_p & t_n;
 endmodule
