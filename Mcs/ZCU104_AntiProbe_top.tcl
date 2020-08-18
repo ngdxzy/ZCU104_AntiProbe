@@ -75,7 +75,11 @@ set rc [catch {
     send_msg_id runtcl-2 error "sourcing script D:/vivado/ZCU104/inpad_adc/Scripts/prePlace.tcl failed"
     return -code error
   }
+  set_param power.BramSDPPropagationFix 1
   set_param chipscope.maxJobs 2
+  set_param power.enableUnconnectedCarry8PinPower 1
+  set_param power.enableCarry8RouteBelPower 1
+  set_param power.enableLutRouteBelPower 1
   create_project -in_memory -part xczu7ev-ffvc1156-2-e
   set_property board_part xilinx.com:zcu104:part0:1.1 [current_project]
   set_property design_mode GateLvl [current_fileset]

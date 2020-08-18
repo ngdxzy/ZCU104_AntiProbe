@@ -36,9 +36,8 @@ module StreamETS#(
 		(* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 sample_clk CLK" *)
 		(* X_INTERFACE_PARAMETER = "FREQ_HZ 100000000" *)
 		output sample_clk,
-		(* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 swing_clk CLK" *)
-		(* X_INTERFACE_PARAMETER = "FREQ_HZ 23188000" *)
-		output swing_clk,
+		// (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 swing_clk CLK" *)
+		// (* X_INTERFACE_PARAMETER = "FREQ_HZ 23188000" *)
 		output jitter_clk,
 		output T,
 		output D,
@@ -136,11 +135,14 @@ module StreamETS#(
 	wire jitter_shift = slv_reg15[8];
 	wire jitter_incdec = slv_reg15[0];
 	wire jitter_shift_done;
+	wire trigger_clk;
 	wire trigger_long,trigger_short;
 	wire [31:0] Static_Counter;
-	assign T = trigger_long & GTH_DATA[0];
-	assign D = trigger_short & GTH_DATA[0];
+	assign T = send_imp;
+	assign D = 1;
 	reg [3:0] counter;
+	reg [3:0] divider;
+	reg send_imp;
 	always @(posedge free_run_clk or negedge rst_n) begin
 		if (~rst_n) begin
 			counter <= 0;
@@ -150,6 +152,20 @@ module StreamETS#(
 		end
 		else begin
 			counter <= 0;
+		end
+	end
+	always @(negedge trigger_clk or negedge rst_n) begin
+		if (~rst_n) begin
+			divider <= 0;
+			send_imp <= 0;
+		end
+		else if (divider < 9) begin
+			divider <= divider + 1;
+			send_imp <= 0;
+		end
+		else begin
+			divider <= 0;
+			send_imp <= gth_data_phase_0[0];
 		end
 	end
 	(* max_fanout= 2 *)reg cmp_data;
@@ -292,10 +308,11 @@ module StreamETS#(
 		.shift        (shift),
 		.shift_done   (shift_done),
 		.system_clk   (system_clk),
+		
+		.trigger_clk  (trigger_clk),
 		.trigger_long  (trigger_long),
 		.trigger_short  (trigger_short),
 		.sample_clk   (sample_clk),
-		.swing_clk    (swing_clk),
 		.jitter_clk   (jitter_clk),
 		.jitter_shift (jitter_shift),
 		.jitter_shift_done(jitter_shift_done),

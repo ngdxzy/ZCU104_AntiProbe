@@ -36,6 +36,7 @@ module ZCU104_AntiProbe_top(
 	inout PAD_P1,
 	inout PAD_N1,
 	inout PAD_P2,
+    output DELAY_CTL_RDY,
 	inout PAD_N2
     );
 	wire gthrefclk00_in;
@@ -109,7 +110,8 @@ module ZCU104_AntiProbe_top(
 		.T 				 (T_C),
 		.D 				 (D_C),
 		.sample_clk_good (system_clk_good),
-		.swing_clk       (swing_clk),
+		.DELAY_CTL_RDY   (DELAY_CTL_RDY),
+		//.swing_clk       (swing_clk),
 		.jitter_clk      (jitter_clk)
 	);
 
