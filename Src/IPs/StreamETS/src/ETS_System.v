@@ -44,7 +44,7 @@ module ETS_System(
 	localparam CHEC = 4'd7;
 	localparam DONE = 4'd8;
 	localparam HALT = 4'd9;
-	wire [31:0] Average;
+	wire [31:0] Average = VernierQ;
 
 	reg [3:0] state,nextstate;
 	wire [9:0] sample_done;
@@ -198,7 +198,7 @@ module ETS_System(
 			enbubble <= {enbubble[8:0],enbubble[9] | bubble};
 		end
 	end
-	VernierPtMap inst_VernierPtMap (.T(VernierQ[7:0]), .Average(Average));
+	//VernierPtMap inst_VernierPtMap (.T(VernierQ[7:0]), .Average(Average));
 
 	ETS_Adder inst_ETS_Adder_0(
 			.clk(sample_clk),
